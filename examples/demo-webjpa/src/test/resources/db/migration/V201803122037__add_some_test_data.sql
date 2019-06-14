@@ -1,0 +1,2 @@
+insert INTO contact (first_name, last_name, email) VALUES ('Christian', 'Solheim', 'c@example.com');
+insert INTO contact (first_name, last_name, email) VALUES ('Bjarte', 'Karlsen', 'Bjarte.Karlsen@skatteetaten.no');

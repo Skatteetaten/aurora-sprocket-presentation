@@ -1,0 +1,20 @@
+{
+  "args": {},
+  "data": "",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9,nb;q=0.8",
+    "Connection": "close",
+    "Cookie": "_gauges_unique_month=1; _gauges_unique_year=1; _gauges_unique=1",
+    "Host": "httpbin.org",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36"
+  },
+  "json": null,
+  "method": "GET",
+  "origin": "151.187.161.3",
+  "url": "https://httpbin.org/anything/test"
+}

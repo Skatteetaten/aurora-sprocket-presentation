@@ -1,0 +1,231 @@
+= Intro til Spring Boot
+Bent André Solheim, Aurora OpenShift
+2019-04-11
+
+:revnumber: {project-version}
+
+
+== Agenda, ca 5 timer
+* Spring og Spring Boot Basics
+* Webapplikasjon (HTTP-API) + RestTemplate
+* Caching
+* Databaseaksess (JDBC + JPA, migreringer)
+* Testing
+* Actuator, Helseendepunkt
+
+
+== Målsetning; Ferdighet
+* Være i stand til å ta i bruk Spring Boots mest sentrale egenskaper for utvikle javaapplikasjoner i henhold til Utviklingsplattforms retningslinjer for javaapplikasjoner.
+
+
+== Målsetning; Holdning
+* Forstå omfanget av egenskapene i Spring Boot og at man ofte kan finne løsninger på vanlige problemer i rammeverket fremfor å måtte utvikle dem selv.
+
+
+== Forutsetninger
+* Forstå grunnleggende begreper som DI (Dependency Injection), Classpath scanning, Application Lifecycle.
+* Forståelse av virkemåten og oppbygningen til tradisjonelle java webapplikasjoner (.war, servlet container).
+* Maven, JDBC, JPA, Cache, ReST, JSON, Hibernate, DataSource, JUnit, Mockito, Slf4j, Logback
+
+
+== Hva dekkes ikke?
+* JAX-RS + Jersey
+* WebFlux
+* Spring Security
+
+
+== Hva er Spring Boot?
+* Bootstraprammeverk
+* Konvensjoner
+* Autoconfiguration fra classpath (non-invasive)
+* Forskjellige startere
+
+
+== pom.xml
+
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+</dependencies>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+----
+
+
+== DemoApplication.java
+[source,java]
+----
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+----
+
+== Demo
+Studere en minimal Spring Boot applikasjon
+
+* Classpath scanning
+* Dependency Injection
+* Konfigurasjon (relaxed binding)
+* Logging
+
+
+== Basics, oppsummering
+* Classpath scanning for automatisk Dependency Injection
+* Konfigurasjon; defaults, profiler og overrides
+* SLF4J og LogBack
+
+
+== Webapp (HTTP-API)
+* spring-boot-starter-web
+** Spring MVC (tilsvarer JAX-RS)
+** Tomcat
+** Jackson
+** javax.validation (hibernate-validator)
+* maven
+** executable jar med embedded servlet container
+
+
+== Spring MVC
+* Bygget på Servletstacken
+* Vært i Spring "siden starten"
+* Bygget opp rundt DispatcherServlet (tar imot alle forespørseler)
+* Controllere annoteres i forhold til http path og method (GET, POST...)
+* (Finnes siden Spring 5 også et reactive alternativ; Spring WebFlux)
+
+
+== Demo
+* Enkelt "ReST"-API (@Controller og @RestController)
+* GET med request parameters (@GetMapping)
+* Json response
+* POST, deserialisering av payload + validering (@PostMapping, @Valid)
+* Feilhåndtering (@ControllerAdvice)
+* RestTemplate + @Configuration/@Bean
+
+
+== Web, oppsummering
+* Embedded servlet container (tomcat)
+* Ferdigkonfigurert med javax.validation og Jackson
+* Bruker Spring MVC som default
+* Content Negotiation, feilhåndtering
+
+
+== Caching
+* Legge på caching transparent på metodenivå
+* Skrus på med @EnableCaching
+* @Cachable, @CacheEvict
+* Cachenøkkel genereres fra metodeparametre
+* spring-boot-starter-cache
+* JCache, EhCache, Hazelcast, Inifispan, Couchbase, Redis, Caffeine, Simple
+
+
+== Demo
+* Skru på caching for /greeting
+* @CacheEvict for POST /greeter
+* Simple Cache
+* Redis
+
+
+== Redis
+image::images/redis.png[SOS2,800]
+
+
+== Caching, oppsummering
+* Skrus på med @EnableCaching
+* @Cachable, @CacheEvict
+* Støtter mange Cache Providers
+
+
+== Databaseaksess med spring boot
+* JDBC
+* migreringer
+* JPA
+
+
+== JDBC
+spring-boot-starter-jdbc
+
+* Datasource med Hikari
+* Spring JDBC
+
+
+== Migreringer
+org.flywaydb:flyway-core
+
+* Flyway
+* Auto configuration
+
+
+== Demo ==
+* Enkel app med Spring JDBC
+* Migrering
+
+
+== JPA
+spring-boot-starter-data-jpa
+
+* Hibernate
+* Spring Data JPA
+* Repository
+
+
+== Oppsummering database
+* Automatisk DataSource
+* God støtte for vanlig SQL/JDBC
+* God støtte for JPA via Spring Data
+* Automatisk eksekvering av databasemigreringer
+
+
+== Testing
+* Unngå å bruke spring til testing
+* Testing av databasekode (testdatabase)
+* Testing av controllere (web slice)
+* Mocking av eksterne tjenester
+* @MockBean, @SpringBootTest, @WebMvcTest, @RestClientTest
+* Mockito
+
+
+== Demo ==
+* Bruke h2 til å teste database
+* Se på testspesifikke databasemigreringer
+* Teste controllere direkte og gjennom http
+* Mocke ekstern tjeneste
+
+
+== Testing oppsummering ==
+
+
+== Actuator
+* "Management Interface"
+* Egen port
+
+
+== Helseendepunkt
+* Avgjøre om applikasjonen fungerer som den skal
+* Standardsjekker for mange teknologier
+* Lett å legge på egne sjekker
+
+
+== Demo ==
+* Legge på actuator støtte
+* Se på de ulike endepunktene (spesielt /health og /info)
+* Legge på info i /info-endepunktet
+* Lage en egen helsesjekk
+
+
+== Actuator oppsummering ==

@@ -1,0 +1,13 @@
+= Presentasjon Spring Boot
+
+Presentasjonen kan bygges med 
+
+    ./gradlew asciidoc
+    
+For kontinuerlig bygging (bygger automatisk ved kodeendringer) bruk
+
+    ./gradlew -t asciidoc
+    
+Dersom du legger til nye ruby gem avhengigheter må du kjøre clean før du bygger for at dette skal bli plukket opp;
+
+    ./gradlew clean asciidoc

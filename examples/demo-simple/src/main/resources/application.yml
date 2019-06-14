@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: nor
+
+---
+
+spring:
+    profiles: en
+
+greeting: Hello
+
+---
+
+spring:
+    profiles: nor
+
+greeting: Hei

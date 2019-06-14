@@ -1,0 +1,112 @@
+import no.skatteetaten.aurora.version.git.GitVersion
+
+buildscript {
+  dependencies {
+    classpath 'org.ysb33r.gradle:vfs-gradle-plugin:1.0'
+    classpath 'commons-httpclient:commons-httpclient:3.1'
+    classpath('no.skatteetaten.aurora:aurora-git-version:2.0.0')
+  }
+}
+
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.3'
+  id 'com.github.jruby-gradle.base' version '1.6.0'
+}
+apply plugin: 'com.github.jruby-gradle.base'
+apply plugin: 'org.ysb33r.vfs'
+apply plugin: 'org.asciidoctor.convert'
+
+ext {
+  revealjsVersion = '3.3.0'
+  asciidoctorBackendVersion = '1.0.3'
+  downloadDir = new File(buildDir, 'download')
+  templateDir = new File(downloadDir, 'templates')
+  revealjsDir = new File(downloadDir, 'reveal.js')
+}
+
+repositories {
+  jcenter()
+  maven { url "http://rubygems-proxy.torquebox.org/releases" }
+}
+
+dependencies {
+  gems "rubygems:asciidoctor-revealjs:${asciidoctorBackendVersion}"
+  gems 'rubygems:asciidoctor-diagram:1.5.4'
+  gems 'rubygems:tilt:2.0.6'
+}
+
+version = GitVersion.determineVersion(file('../.')).version
+
+task download {
+  doLast {
+    mkdir downloadDir
+    vfs {
+      cp "zip:https://github.com/asciidoctor/asciidoctor-reveal.js/archive/v${asciidoctorBackendVersion}.zip",
+          templateDir, recursive: true, overwrite: true
+      cp "zip:https://github.com/hakimel/reveal.js/archive/${revealjsVersion}.zip!reveal.js-${revealjsVersion}",
+          revealjsDir, recursive: true, overwrite: true
+      cp "zip:http://aurora/nexus/content/repositories/releases/ske/aurora/opplaering/aurora-revealjs-theme/1.1.0/aurora-revealjs-theme-1.1.0.zip",
+          revealjsDir, recursive: true, overwrite: true
+    }
+    copy{
+      from ("${revealjsDir}/reveal.js-${revealjsVersion}")
+      into "${revealjsDir}"
+    }
+    new File(revealjsDir, "reveal.js-${revealjsVersion}").deleteDir()
+  }
+}
+
+download {
+  description "Download extra revealjs resources"
+  outputs.dir templateDir
+  outputs.dir revealjsDir
+}
+
+String dotPath = "which dot".execute().text.trim()
+System.setProperty("graphvizdot", dotPath)
+asciidoctor {
+  dependsOn jrubyPrepare
+  requires = ['asciidoctor-diagram']
+  gemPath = jrubyPrepare.outputDir
+
+  sources {
+    include(
+        'index.adoc'
+    )
+  }
+
+  resources {
+    from('src/docs/asciidoc') {
+      include 'images/**'
+    }
+    from(downloadDir) {
+      include 'reveal.js/**'
+    }
+  }
+
+  backends 'revealjs'
+
+  attributes 'source-highlighter': 'coderay',
+      'imagesdir': '',
+      'sourcedir': file('src/scripts').absolutePath,
+      'project-version': version,
+      'toc': 'left',
+      'icons': 'font',
+      'setanchors': '',
+      'idprefix': '',
+      'idseparator': '-',
+      'docinfo1': '',
+      'revealjs_theme': 'skatt',
+      'revealjs_transition': 'linear',
+      'revealjs_history': 'true',
+      'revealjs_slideNumber': 'true',
+      'revealjs_controls': 'false',
+      'revealjs_width': '1024',
+      'revealjs_height': '728',
+      'revealjs_margin': '0.05'
+
+  options template_dirs: [new File(templateDir,
+      "asciidoctor-reveal.js-${asciidoctorBackendVersion}/templates/slim").absolutePath]
+
+  dependsOn download
+}

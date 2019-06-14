@@ -1,0 +1,20 @@
+buildscript {
+  dependencies {
+    classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
+  }
+}
+
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+asciidoctor {
+  backends 'pdf', 'html5'
+  attributes([
+      examples: file("../examples"),
+      version : version,
+      'source-highlighter': 'coderay',
+  ])
+  outputDir "$buildDir/asciidoc"
+  sourceDir 'src/main/asciidoc'
+}
