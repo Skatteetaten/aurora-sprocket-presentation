@@ -1,0 +1,12 @@
+.reveal section[data-state="title"] h1 {
+  font-size: 2em;
+}
+
+.reveal section[data-state="white-font"] h2 {
+  color: white;
+}
+
+.underline {
+  text-decoration: underline;
+  color: yellow;
+}

@@ -1,231 +1,71 @@
-= Intro til Spring Boot
-Bent André Solheim, Aurora OpenShift
-2019-04-11
+
+
+[state=title]
+= Continuous deployment of docker images on Kubernetes that scale
+Bjarte Stien Karlsen & Kristoffer Moberg Christensen
+2019-09-14
+:customcss: css/custom.css
 
 :revnumber: {project-version}
 
+[state=white-font]
+== How do [.underline]#*YOU*# roll out critical security bugs?
+image::images/security-bug.jpg[background, size=cover]
 
-== Agenda, ca 5 timer
-* Spring og Spring Boot Basics
-* Webapplikasjon (HTTP-API) + RestTemplate
-* Caching
-* Databaseaksess (JDBC + JPA, migreringer)
-* Testing
-* Actuator, Helseendepunkt
 
+== Agenda
+* Who are we?
+* Background
+* Sprocket
+* Usecases
+* How can you adopt Sprocket?
+* How to expand on Sprocket?
 
-== Målsetning; Ferdighet
-* Være i stand til å ta i bruk Spring Boots mest sentrale egenskaper for utvikle javaapplikasjoner i henhold til Utviklingsplattforms retningslinjer for javaapplikasjoner.
 
+== Who are we?
+* Bjarte Stien Karlsen, Architect & Developer in The Norwegian Tax Administration(TNTA)
+* Kristoffer Moberg Christensen, Trainee in TNTA
 
-== Målsetning; Holdning
-* Forstå omfanget av egenskapene i Spring Boot og at man ofte kan finne løsninger på vanlige problemer i rammeverket fremfor å måtte utvikle dem selv.
+== Background
+* Change in Base Images or builder logic = trigger all BuildConfigs simultaneously
+* Time from image build to Deployment is too long (some cases 2-4 hours)
 
+== Sprocket
+image::images/FraggleRock-Sprocket.jpg[sprocket,150, float="right"]
+* Currently running as a Pilot in our Plattform
+* Sprocket is named after the dog in Fraggle rock
 
-== Forutsetninger
-* Forstå grunnleggende begreper som DI (Dependency Injection), Classpath scanning, Application Lifecycle.
-* Forståelse av virkemåten og oppbygningen til tradisjonelle java webapplikasjoner (.war, servlet container).
-* Maven, JDBC, JPA, Cache, ReST, JSON, Hibernate, DataSource, JUnit, Mockito, Slf4j, Logback
 
+== How does it work?
+* Show deployment
+* Patch the deployment with the sprocket label
+* Push an updated image
+* See that it updates
 
-== Hva dekkes ikke?
-* JAX-RS + Jersey
-* WebFlux
-* Spring Security
+== Solution composition
+* Sprocket: A server-side component that receive push events from a DockerRegistry
+ ** Sprockets needs to run with permissions to perform certain operations in your cluster.
+* an sprocket label on the resources you want to have new images that sprocket will query against when it receives an push event
+  ** Sprocket labels are sha1 hashes of the url where you pull the image from
+  ** If you want to listen to more then one image change in a resource you can use a Sprocket CRD to get many-to-one semantics
 
 
-== Hva er Spring Boot?
-* Bootstraprammeverk
-* Konvensjoner
-* Autoconfiguration fra classpath (non-invasive)
-* Forskjellige startere
 
+== Usecases
+How you can use Sprocket is correlated heavily on how you version your docker images. Does the version change if you change the way you build Docker Images or if the base image changes?
 
-== pom.xml
+https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-strategy-the-auroraversion
 
-[source,xml]
-----
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-</dependencies>
+If you push tags when building your images like in the above documentation it can open lots of possibilities.
 
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-        </plugin>
-    </plugins>
-</build>
-----
 
+== How can you adopt Sprocket?
+* In your build pipeline push to a tag that is updated when there are new versions released on this release track.
+* In your Deployments listen to this moveable tag and not an immutable tag
+* label your Deployment with an sprocket label that is the hash of the URL to this tag.
+* run sprocket configured to listen to Depoyments in this namespace(or all namespaces)
 
-== DemoApplication.java
-[source,java]
-----
-@SpringBootApplication
-public class DemoApplication {
 
-    public static void main(String[] args) {
-
-        SpringApplication.run(DemoApplication.class, args);
-    }
-}
-----
-
-== Demo
-Studere en minimal Spring Boot applikasjon
-
-* Classpath scanning
-* Dependency Injection
-* Konfigurasjon (relaxed binding)
-* Logging
-
-
-== Basics, oppsummering
-* Classpath scanning for automatisk Dependency Injection
-* Konfigurasjon; defaults, profiler og overrides
-* SLF4J og LogBack
-
-
-== Webapp (HTTP-API)
-* spring-boot-starter-web
-** Spring MVC (tilsvarer JAX-RS)
-** Tomcat
-** Jackson
-** javax.validation (hibernate-validator)
-* maven
-** executable jar med embedded servlet container
-
-
-== Spring MVC
-* Bygget på Servletstacken
-* Vært i Spring "siden starten"
-* Bygget opp rundt DispatcherServlet (tar imot alle forespørseler)
-* Controllere annoteres i forhold til http path og method (GET, POST...)
-* (Finnes siden Spring 5 også et reactive alternativ; Spring WebFlux)
-
-
-== Demo
-* Enkelt "ReST"-API (@Controller og @RestController)
-* GET med request parameters (@GetMapping)
-* Json response
-* POST, deserialisering av payload + validering (@PostMapping, @Valid)
-* Feilhåndtering (@ControllerAdvice)
-* RestTemplate + @Configuration/@Bean
-
-
-== Web, oppsummering
-* Embedded servlet container (tomcat)
-* Ferdigkonfigurert med javax.validation og Jackson
-* Bruker Spring MVC som default
-* Content Negotiation, feilhåndtering
-
-
-== Caching
-* Legge på caching transparent på metodenivå
-* Skrus på med @EnableCaching
-* @Cachable, @CacheEvict
-* Cachenøkkel genereres fra metodeparametre
-* spring-boot-starter-cache
-* JCache, EhCache, Hazelcast, Inifispan, Couchbase, Redis, Caffeine, Simple
-
-
-== Demo
-* Skru på caching for /greeting
-* @CacheEvict for POST /greeter
-* Simple Cache
-* Redis
-
-
-== Redis
-image::images/redis.png[SOS2,800]
-
-
-== Caching, oppsummering
-* Skrus på med @EnableCaching
-* @Cachable, @CacheEvict
-* Støtter mange Cache Providers
-
-
-== Databaseaksess med spring boot
-* JDBC
-* migreringer
-* JPA
-
-
-== JDBC
-spring-boot-starter-jdbc
-
-* Datasource med Hikari
-* Spring JDBC
-
-
-== Migreringer
-org.flywaydb:flyway-core
-
-* Flyway
-* Auto configuration
-
-
-== Demo ==
-* Enkel app med Spring JDBC
-* Migrering
-
-
-== JPA
-spring-boot-starter-data-jpa
-
-* Hibernate
-* Spring Data JPA
-* Repository
-
-
-== Oppsummering database
-* Automatisk DataSource
-* God støtte for vanlig SQL/JDBC
-* God støtte for JPA via Spring Data
-* Automatisk eksekvering av databasemigreringer
-
-
-== Testing
-* Unngå å bruke spring til testing
-* Testing av databasekode (testdatabase)
-* Testing av controllere (web slice)
-* Mocking av eksterne tjenester
-* @MockBean, @SpringBootTest, @WebMvcTest, @RestClientTest
-* Mockito
-
-
-== Demo ==
-* Bruke h2 til å teste database
-* Se på testspesifikke databasemigreringer
-* Teste controllere direkte og gjennom http
-* Mocke ekstern tjeneste
-
-
-== Testing oppsummering ==
-
-
-== Actuator
-* "Management Interface"
-* Egen port
-
-
-== Helseendepunkt
-* Avgjøre om applikasjonen fungerer som den skal
-* Standardsjekker for mange teknologier
-* Lett å legge på egne sjekker
-
-
-== Demo ==
-* Legge på actuator støtte
-* Se på de ulike endepunktene (spesielt /health og /info)
-* Legge på info i /info-endepunktet
-* Lage en egen helsesjekk
-
-
-== Actuator oppsummering ==
+== How to expand on Sprocket?
+* Rate limit changes for one image
+* Invalidate manifest cache
