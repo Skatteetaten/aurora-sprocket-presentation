@@ -6,6 +6,10 @@
   color: white;
 }
 
+.reveal section[data-state="red-font"] h2 {
+  color: #5a2a2a;
+}
+
 .underline {
   text-decoration: underline;
   color: yellow;

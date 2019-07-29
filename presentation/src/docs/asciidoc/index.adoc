@@ -1,18 +1,17 @@
-
+:customcss: css/custom.css
 
 [state=title]
 = Continuous deployment of docker images on Kubernetes that scale
 Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
-:customcss: css/custom.css
 
 :revnumber: {project-version}
 
 [state=white-font]
-== How do [.underline]#*YOU*# roll out critical security bugs?
+== How do [.underline]#*YOU*# roll out critical security patches?
 image::images/security-bug.jpg[background, size=cover]
 
-
+[state=red-font]
 == Agenda
 * Who are we?
 * Background
@@ -21,51 +20,86 @@ image::images/security-bug.jpg[background, size=cover]
 * How can you adopt Sprocket?
 * How to expand on Sprocket?
 
-
+[state=red-font]
 == Who are we?
 * Bjarte Stien Karlsen, Architect & Developer in The Norwegian Tax Administration(TNTA)
 * Kristoffer Moberg Christensen, Trainee in TNTA
 
+[Attributes]
+|===
+|Header column 1 |Header column 2 |Header column 3
+
+|Cell 1, row 1
+|Cell 2, row 1
+|Cell 3, row 1
+|===
+
+
+[state=red-font]
 == Background
 * Change in Base Images or builder logic = trigger all BuildConfigs simultaneously
 * Time from image build to Deployment is too long (some cases 2-4 hours)
 
+[state=red-font]
 == Sprocket
 image::images/FraggleRock-Sprocket.jpg[sprocket,150, float="right"]
 * Currently running as a Pilot in our Plattform
 * Sprocket is named after the dog in Fraggle rock
 
-
+[state=red-font]
 == How does it work?
 * Show deployment
 * Patch the deployment with the sprocket label
 * Push an updated image
 * See that it updates
 
+[state=red-font]
 == Solution composition
-* Sprocket: A server-side component that receive push events from a DockerRegistry
- ** Sprockets needs to run with permissions to perform certain operations in your cluster.
-* an sprocket label on the resources you want to have new images that sprocket will query against when it receives an push event
-  ** Sprocket labels are sha1 hashes of the url where you pull the image from
-  ** If you want to listen to more then one image change in a resource you can use a Sprocket CRD to get many-to-one semantics
 
+* A server-side component that receive push events from a DockerRegistry
 
+[state=red-font]
+== Docker Registry
 
+* Webhook pushes events to Sprocket
+* Image
+
+[state=red-font]
+== Permissions
+
+* Deployment
+
+[state=red-font]
+== Image Change
+
+* Sprocket label on resources that wants updated images
+* SHA1 hash of the image pull url
+* Many-to-one semantics with CRD
+
+==
+
+[state=red-font]
 == Usecases
 How you can use Sprocket is correlated heavily on how you version your docker images. Does the version change if you change the way you build Docker Images or if the base image changes?
 
+[state=red-font]
+== Our version strategy
 https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-strategy-the-auroraversion
 
-If you push tags when building your images like in the above documentation it can open lots of possibilities.
+* (Should be elaborated)
 
+[state=red-font]
+== Image change triggers
+Pushing several tags for the same image allows user to decide when to update the deployment
 
+[state=red-font]
 == How can you adopt Sprocket?
 * In your build pipeline push to a tag that is updated when there are new versions released on this release track.
 * In your Deployments listen to this moveable tag and not an immutable tag
 * label your Deployment with an sprocket label that is the hash of the URL to this tag.
-* run sprocket configured to listen to Depoyments in this namespace(or all namespaces)
+* run sprocket configured to listen to Deployments in this namespace(or all namespaces)
 
-
+[state=red-font]
 == How to expand on Sprocket?
 * Rate limit changes for one image
 * Invalidate manifest cache

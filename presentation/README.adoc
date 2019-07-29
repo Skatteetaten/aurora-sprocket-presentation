@@ -1,4 +1,4 @@
-= Presentasjon Spring Boot
+= Presentasjon Aurora Sprocket
 
 Presentasjonen kan bygges med 
 
