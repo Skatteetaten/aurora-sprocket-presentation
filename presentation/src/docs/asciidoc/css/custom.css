@@ -1,16 +1,31 @@
 .reveal section[data-state="title"] h1 {
-  font-size: 2em;
+    font-size: 2em;
 }
 
-.reveal section[data-state="white-font"] h2 {
-  color: white;
+.reveal section[data-state="left-box"] h2 {
+    color: white;
+    background: rgba(25, 25, 25, .4);
+    padding-top: 20px;
+    border-radius: 20px;
+    margin-left: -3em;
+    margin-right: 3em;
+}
+
+
+.reveal section[data-state="right-box"] h2 {
+    color: white;
+    background: rgba(25, 25, 25, .4);
+    padding-top: 20px;
+    border-radius: 20px;
+    margin-left: 3em;
+    margin-right: -3em;
 }
 
 .reveal section[data-state="red-font"] h2 {
-  color: #5a2a2a;
+    color: #5a2a2a;
 }
 
 .underline {
-  text-decoration: underline;
-  color: yellow;
+    text-decoration: underline;
+    color: yellow;
 }

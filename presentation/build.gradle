@@ -17,7 +17,7 @@ apply plugin: 'org.ysb33r.vfs'
 apply plugin: 'org.asciidoctor.convert'
 
 ext {
-  revealjsVersion = '3.3.0'
+  revealjsVersion = '3.8.0'
   asciidoctorBackendVersion = '1.0.3'
   downloadDir = new File(buildDir, 'download')
   templateDir = new File(downloadDir, 'templates')
@@ -100,7 +100,7 @@ asciidoctor {
       'idseparator': '-',
       'docinfo1': '',
       'revealjs_theme': 'skatt',
-      'revealjs_transition': 'linear',
+      'revealjs_transition': 'fade',
       'revealjs_history': 'true',
       'revealjs_slideNumber': 'true',
       'revealjs_controls': 'false',

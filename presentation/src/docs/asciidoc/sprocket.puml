@@ -1,0 +1,17 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+database DockerRegistry
+rectangle Sprocket
+
+database Kubernetes
+
+
+DockerRegistry --> Sprocket : 1.Send audit events
+Sprocket --> Kubernetes: 2. find and update resources
+
+@enduml

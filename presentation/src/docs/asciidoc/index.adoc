@@ -4,57 +4,126 @@
 = Continuous deployment of docker images on Kubernetes that scale
 Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
-
 :revnumber: {project-version}
 
-[state=white-font]
+[state=right-box]
 == How do [.underline]#*YOU*# roll out critical security patches?
-image::images/security-bug.jpg[background, size=cover]
+image::images/security-bug.jpg[canvas, size=cover]
 
 [state=red-font]
 == Agenda
-* Who are we?
-* Background
-* Sprocket
-* Usecases
-* How can you adopt Sprocket?
-* How to expand on Sprocket?
+* Who are we? 5 min
+* Background 10 min
+* Sprocket 15 min
+* Use cases 10 min
+* How can you adopt Sprocket? : 10 min
+* How to expand on Sprocket? : 10 min
 
 [state=red-font]
 == Who are we?
-* Bjarte Stien Karlsen, Architect & Developer in The Norwegian Tax Administration(TNTA)
-* Kristoffer Moberg Christensen, Trainee in TNTA
-
-[Attributes]
-|===
-|Header column 1 |Header column 2 |Header column 3
-
-|Cell 1, row 1
-|Cell 2, row 1
-|Cell 3, row 1
-|===
+* Bjarte Stien Karlsen, Architect & Developer in the Norwegian Tax Administration(NTA)
+* Kristoffer Moberg Christensen, Trainee in NTA
 
 
 [state=red-font]
 == Background
-* Change in Base Images or builder logic = trigger all BuildConfigs simultaneously
-* Time from image build to Deployment is too long (some cases 2-4 hours)
+ * Current solution based on polling the DockerRegistry
+ ** Scheduled ImageStreams
+ ** BuildTriggers on BaseImages and BuilderLogic
+ * Current solution ties us to OpenShift
 
+** TODO: lag et diagram som viser polling fra ImageStream og BuildTrigger
+
+=== Problem #1: Performance
+Polling for new changes to lots of images all the time does not scale
+
+** TODO: Tall, logger. høre med Eivind/Siggen.
+
+MaxScheduledImageImportsPerMinute=120
+ScheduledImageImportMinimumIntervalSeconds=120
+
+
+=== Problem #2: Race condition on multiple triggers
+If a Pod has two containers and both have new versions who triggers first?
+
+=== Problem #3: No flow control
+Updating the base image/builder will fire every single build at the same time
+
+
+=== Can OpenSource help?
+* https://github.com/containrrr/watchtower and https://github.com/pyouroboros/ouroboros are both based on polling.
+* It might be easier to tune the algorithm compared to ImageStreams.
+* However the problem with throttling still exist.
+
+=== What primities can help us here?
+ * notifications from DockerRegistries
+ * notifications from build pipelines
+
+=== Introducing Sprocket
+No OpenSource solution
 [state=red-font]
 == Sprocket
-image::images/FraggleRock-Sprocket.jpg[sprocket,150, float="right"]
-* Currently running as a Pilot in our Plattform
-* Sprocket is named after the dog in Fraggle rock
+plantuml::sprocket.puml["sprocket", png]
+
+=== Problems
+ * What if event fails?
+ * Need to monitor and have fallback mechanism. Poll
+ * Mechanism to check if image is running the latest version?
+ * Distribute event to multiple clusters
+
+
+[.right]
+image::images/FraggleRock-Sprocket.jpg,150, float="right"]
+
+[.left]
+* Currently running as a Pilot in our Platform
+* Sprocket is named after the dog in Fraggle Rock
+
+
+=== Sequence
+ - listen to globalEventHook
+ - filter out garbage events
+ - parse event into a ImageChangeEvent
+ - find related kubernetes resources
+ - perform builds/deployments/imports
+
+=== Video manus
+ - 3 terminaler
+ - topp bygg
+ - venstre sprocket log
+ - høyre: stern for apper
+
+ * start bygg uten sprocket annotasjon
+ * vis at det kommer sprocket event men ikke at det rulles ut noe
+
+ * annoter app 1
+ * start bygg, vis at det kommer
+ * annoter app 2
+ * start bygg, vis at begge kommer
 
 [state=red-font]
-== How does it work?
+=== How does it work?
+** demo, video, asciicinema elns
+
 * Show deployment
 * Patch the deployment with the sprocket label
 * Push an updated image
 * See that it updates
 
+* queries on labels in kubernetes is optimized
+* a label can only be 63 characters and not contain special characters
+* we sha1 the url to the tag and use that as the key
+
+* annotate DC/Deployment/IS or create CRD for 1-many
+
+=== How do you use Sprocket
+ * a single trigger in a resource can use the `skatteetaten.no/sprocket` label
+
+=== Plans
+ * rate limit changes from a single source. If a ImageChangeEvent returns 2000 resource run 100 at a time and sleep between
+
 [state=red-font]
-== Solution composition
+=== Solution composition
 
 * A server-side component that receive push events from a DockerRegistry
 
@@ -83,9 +152,10 @@ image::images/FraggleRock-Sprocket.jpg[sprocket,150, float="right"]
 How you can use Sprocket is correlated heavily on how you version your docker images. Does the version change if you change the way you build Docker Images or if the base image changes?
 
 [state=red-font]
-== Our version strategy
+=== Our version strategy
 https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-strategy-the-auroraversion
 
+* example from postgresql dockerhub. Screenshot?
 * (Should be elaborated)
 
 [state=red-font]
@@ -103,3 +173,5 @@ Pushing several tags for the same image allows user to decide when to update the
 == How to expand on Sprocket?
 * Rate limit changes for one image
 * Invalidate manifest cache
+* support 1-many triggers via a CRD Sprocket.
+* this will enable you to _not_ touch Deployment/ImageStream/DeploymentConfig resources. Only the CRD.
