@@ -1,38 +1,57 @@
 :customcss: css/custom.css
 
+There is a new CVE out... Critical vulnerability in your base image. We need to update everything now. How long will it take?
+Hold my coffee, uhm ok I only need to update the version of our base and it is fixed. No problem. Git commit.
+Can you approve the PR and everything will roll out?
+*Yawn* No need, let me read the CVE and fix it, everything else will just happen automagically.
+
 [state=title]
 = Continuous deployment of docker images on Kubernetes that scale
 Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
 :revnumber: {project-version}
 
+
+[.image-slide]
 [state=right-box]
 == How do [.underline]#*YOU*# roll out critical security patches?
 image::images/security-bug.jpg[canvas, size=cover]
+[.credit]
+credit:foobar
+
+[state=red-font]
+== Intro?
+* Bjarte Stien Karlsen, Architect & Developer in the Norwegian Tax Administration(NTA)
+* Kristoffer Moberg Christensen, Trainee in NTA
 
 [state=red-font]
 == Agenda
-* Who are we? 5 min
+* Introduction ? 5 min
 * Background 10 min
 * Sprocket 15 min
 * Use cases 10 min
 * How can you adopt Sprocket? : 10 min
 * How to expand on Sprocket? : 10 min
 
-[state=red-font]
-== Who are we?
-* Bjarte Stien Karlsen, Architect & Developer in the Norwegian Tax Administration(NTA)
-* Kristoffer Moberg Christensen, Trainee in NTA
-
+=== Last years problem
+ * ImageStreams do not scale for _our_ needs
+ * We have over 2000 unique ImageStreams and in _sometimes_ it takes hours! to roll out a new change
+ ** Developers start to just manually roll out and not wait for it to happen automatically
 
 [state=red-font]
 == Background
  * Current solution based on polling the DockerRegistry
- ** Scheduled ImageStreams
- ** BuildTriggers on BaseImages and BuilderLogic
- * Current solution ties us to OpenShift
+ * Part of the OpenShift distribution
 
-** TODO: lag et diagram som viser polling fra ImageStream og BuildTrigger
+=== Updating what is running
+ * Scheduled ImageStreams
+ * TODO: diagram ImageStream/Dc/DockerRegistry
+
+=== Triggering builds
+ * TODO: Diagram buildConfig trigger
+ ** BuildTriggers on BaseImages and BuilderLogic
+
+Bilder problemer
 
 === Problem #1: Performance
 Polling for new changes to lots of images all the time does not scale
@@ -42,50 +61,66 @@ Polling for new changes to lots of images all the time does not scale
 MaxScheduledImageImportsPerMinute=120
 ScheduledImageImportMinimumIntervalSeconds=120
 
-
 === Problem #2: Race condition on multiple triggers
 If a Pod has two containers and both have new versions who triggers first?
 
 === Problem #3: No flow control
 Updating the base image/builder will fire every single build at the same time
 
+=== Needs
+ * push based, reacting to events/webhooks
+ * support Nexus (hosted/grouped repos)
+ * enable flow control
 
 === Can OpenSource help?
-* https://github.com/containrrr/watchtower and https://github.com/pyouroboros/ouroboros are both based on polling.
-* It might be easier to tune the algorithm compared to ImageStreams.
-* However the problem with throttling still exist.
+ * looked at a lot of alternatives
+ * most are based on polling
+ * most promising is https://keel.sh/docs/#introduction[keel]
+ ** supports WebHook/push based
+ ** does not support OpenShift resources
+ ** does not support Nexus Container Registry
+ ** no flow control
 
-=== What primities can help us here?
+=== What primitives can help us here?
  * notifications from DockerRegistries
  * notifications from build pipelines
 
-=== Introducing Sprocket
-No OpenSource solution
-[state=red-font]
+=== Build our own
+ * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
+ * Current solution ties us to OpenShift
+
+[state=left-box]
 == Sprocket
+image::images/sprocket.jpg[canvas, size=cover]
+[.credit]
+credit:https://barkpost.com/cute/the-best-muppet-dogs/
+
+[state=red-font]
+== Sprocket MVP
 plantuml::sprocket.puml["sprocket", png]
 
-=== Problems
- * What if event fails?
- * Need to monitor and have fallback mechanism. Poll
- * Mechanism to check if image is running the latest version?
- * Distribute event to multiple clusters
-
-
-[.right]
-image::images/FraggleRock-Sprocket.jpg,150, float="right"]
-
-[.left]
+=== Facts
 * Currently running as a Pilot in our Platform
 * Sprocket is named after the dog in Fraggle Rock
 
+=== Limitations
+ * no resilience if event fails
+ ** we get an alert from Nexus but nothing automatic
+ * only support a single cluster
+ * no flow control
+ * only support deploy on OpenShift via ImageStream
 
 === Sequence
- - listen to globalEventHook
- - filter out garbage events
- - parse event into a ImageChangeEvent
- - find related kubernetes resources
- - perform builds/deployments/imports
+ * listen to globalEventHook
+ * filter out garbage events
+ * parse event into a ImageChangeEvent(s)
+ ** one hosted registry can have several groups so it can fire multiple events
+ * find related kubernetes resources
+ * perform builds/deployments/imports
+
+=== Demo
+ * show a video of how Sprocket works
+ * building a new image will trigger a deploy on an event
 
 === Video manus
  - 3 terminaler
@@ -101,31 +136,26 @@ image::images/FraggleRock-Sprocket.jpg,150, float="right"]
  * annoter app 2
  * start bygg, vis at begge kommer
 
-[state=red-font]
-=== How does it work?
-** demo, video, asciicinema elns
-
-* Show deployment
-* Patch the deployment with the sprocket label
-* Push an updated image
-* See that it updates
-
-* queries on labels in kubernetes is optimized
-* a label can only be 63 characters and not contain special characters
-* we sha1 the url to the tag and use that as the key
-
-* annotate DC/Deployment/IS or create CRD for 1-many
 
 === How do you use Sprocket
  * a single trigger in a resource can use the `skatteetaten.no/sprocket` label
 
+=== Permissions
+ - list ImageStream, perform ImageStreamUpdate
+ - list, patch Deployment
+ - list, rollout DeploymentConfig
+ - list BuildConfig, start Build
+ - list Sprocket
+
 === Plans
- * rate limit changes from a single source. If a ImageChangeEvent returns 2000 resource run 100 at a time and sleep between
-
-[state=red-font]
-=== Solution composition
-
-* A server-side component that receive push events from a DockerRegistry
+ * rate limiting
+ ** label-name: skatteetaten.no/sprocket
+ ** rate limit for type of event/action. Only run 100 builds then wait 5 sec
+ * avoid duplicate rollouts from a single source
+ * distributing ImageChangeEvent to multiple clusters
+ * audit logging
+ * fallback mechanism that can periodically poll and fire ImageChangeEvent
+ * cache part of DockerManifest when an ImageChangeEvent happends
 
 [state=red-font]
 == Docker Registry

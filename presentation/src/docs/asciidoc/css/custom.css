@@ -5,10 +5,9 @@
 .reveal section[data-state="left-box"] h2 {
     color: white;
     background: rgba(25, 25, 25, .4);
-    padding-top: 20px;
     border-radius: 20px;
-    margin-left: -3em;
-    margin-right: 3em;
+    margin-left: -1em;
+    margin-right: 7em;
 }
 
 

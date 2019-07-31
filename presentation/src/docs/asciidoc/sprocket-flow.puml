@@ -3,6 +3,7 @@ scale 600 height
 !include skatt.iuml
 skinparam  BackgroundColor white
 
+() findEvents as " "
 
 package ImageChangeEvent [
  registry=docker.skatteetaten.no
@@ -10,18 +11,46 @@ package ImageChangeEvent [
  tag=1
 ]
 
-rectangle DeploymentConfig
-rectangle ImageStream
-rectangle Sprocket
-rectangle Deployment
-node findEvents [
- skatteetaten.no/sprocket
+rectangle DeploymentConfig [
+ DeploymentConfig
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
 ]
+rectangle ImageStream [
+ ImageStream
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+]
+rectangle Sprocket [
+ Sprocket
+ ---
+  skatteetaten.no/sprocket=sha1-abcdefg
+ ---
+ spec:
+ - kind: BuildConfig
+ - name: app
+ - namespace: env
+]
+
+rectangle BuildConfig [
+ BuildConfig
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+]
+
+rectangle Deployment [
+ Deployment
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+]
+
+
 ImageChangeEvent --> findEvents : sha1-abcdefg
-findEvents --> DeploymentConfig
-findEvents --> Deployment
+findEvents -right-> DeploymentConfig
+findEvents -left-> Deployment
 findEvents --> ImageStream
 findEvents --> Sprocket
+findEvents --> BuildConfig
 
 
 
