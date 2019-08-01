@@ -1,45 +1,37 @@
 :customcss: css/custom.css
 
-There is a new CVE out... Critical vulnerability in your base image. We need to update everything now. How long will it take?
-Hold my coffee, uhm ok I only need to update the version of our base and it is fixed. No problem. Git commit.
-Can you approve the PR and everything will roll out?
-*Yawn* No need, let me read the CVE and fix it, everything else will just happen automagically.
-
 [state=title]
-= Continuous deployment of docker images on Kubernetes that scale
+= CD on Kubernetes that scale
 Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
 :revnumber: {project-version}
 
-
 [.image-slide]
-[state=right-box]
-== How do [.underline]#*YOU*# roll out critical security patches?
+== [.underline]#*CRITICAL VULNERABILITY*# out that affects all your images.
 image::images/security-bug.jpg[canvas, size=cover]
 [.credit]
 credit:foobar
 
 [state=red-font]
-== Intro?
+== Intro
 * Bjarte Stien Karlsen, Architect & Developer in the Norwegian Tax Administration(NTA)
 * Kristoffer Moberg Christensen, Trainee in NTA
 
 [state=red-font]
-== Agenda
-* Introduction ? 5 min
-* Background 10 min
-* Sprocket 15 min
-* Use cases 10 min
-* How can you adopt Sprocket? : 10 min
-* How to expand on Sprocket? : 10 min
 
-=== Last years problem
- * ImageStreams do not scale for _our_ needs
- * We have over 2000 unique ImageStreams and in _sometimes_ it takes hours! to roll out a new change
- ** Developers start to just manually roll out and not wait for it to happen automatically
+
+== Agenda
+* *Background*
+* Sprocket
+* Use cases
+* How can you adopt Sprocket?
+* How to expand on Sprocket?
+* Plans & Improvements
 
 [state=red-font]
-== Background
+=== Skatteetaten og Kubernetes
+
+=== Background
  * Current solution based on polling the DockerRegistry
  * Part of the OpenShift distribution
 
@@ -89,6 +81,13 @@ Updating the base image/builder will fire every single build at the same time
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
  * Current solution ties us to OpenShift
 
+== Agenda
+* Background
+* *Sprocket*
+* Use cases
+* How can you adopt Sprocket?
+* How to expand on Sprocket?
+
 [state=left-box]
 == Sprocket
 image::images/sprocket.jpg[canvas, size=cover]
@@ -136,16 +135,30 @@ plantuml::sprocket.puml["sprocket", png]
  * annoter app 2
  * start bygg, vis at begge kommer
 
-
-=== How do you use Sprocket
- * a single trigger in a resource can use the `skatteetaten.no/sprocket` label
-
 === Permissions
- - list ImageStream, perform ImageStreamUpdate
- - list, patch Deployment
- - list, rollout DeploymentConfig
- - list BuildConfig, start Build
- - list Sprocket
+- list ImageStream, perform ImageStreamUpdate
+- list, patch Deployment
+- list, rollout DeploymentConfig
+- list BuildConfig, start Build
+- list Sprocket
+
+== Agenda
+* Background
+* *Sprocket*
+* Use cases
+* How can you adopt Sprocket?
+* How to expand on Sprocket?
+
+
+=== Use cases
+How you can use Sprocket is correlated heavily on how you version your docker images. Does the version change if you change the way you build Docker Images or if the base image changes?
+
+[state=red-font]
+=== Our version strategy
+https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-strategy-the-auroraversion
+
+* example from postgresql dockerhub. Screenshot?
+* (Should be elaborated)
 
 === Plans
  * rate limiting
@@ -157,36 +170,7 @@ plantuml::sprocket.puml["sprocket", png]
  * fallback mechanism that can periodically poll and fire ImageChangeEvent
  * cache part of DockerManifest when an ImageChangeEvent happends
 
-[state=red-font]
-== Docker Registry
 
-* Webhook pushes events to Sprocket
-* Image
-
-[state=red-font]
-== Permissions
-
-* Deployment
-
-[state=red-font]
-== Image Change
-
-* Sprocket label on resources that wants updated images
-* SHA1 hash of the image pull url
-* Many-to-one semantics with CRD
-
-==
-
-[state=red-font]
-== Usecases
-How you can use Sprocket is correlated heavily on how you version your docker images. Does the version change if you change the way you build Docker Images or if the base image changes?
-
-[state=red-font]
-=== Our version strategy
-https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-strategy-the-auroraversion
-
-* example from postgresql dockerhub. Screenshot?
-* (Should be elaborated)
 
 [state=red-font]
 == Image change triggers

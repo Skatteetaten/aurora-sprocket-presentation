@@ -16,7 +16,7 @@ rectangle DeploymentConfig [
  ---
  skatteetaten.no/sprocket=sha1-abcdefg
 ]
-rectangle ImageStream [
+component ImageStream [
  ImageStream
  ---
  skatteetaten.no/sprocket=sha1-abcdefg
@@ -46,9 +46,9 @@ rectangle Deployment [
 
 
 ImageChangeEvent --> findEvents : sha1-abcdefg
-findEvents -right-> DeploymentConfig
-findEvents -left-> Deployment
-findEvents --> ImageStream
+findEvents --> DeploymentConfig
+findEvents -right-> Deployment
+findEvents -left-> ImageStream
 findEvents --> Sprocket
 findEvents --> BuildConfig
 
