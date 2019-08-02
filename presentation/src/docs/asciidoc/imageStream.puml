@@ -1,0 +1,35 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+
+
+component is [
+ImageStream
+--
+name=app
+version=1
+]
+
+component dc [
+DeploymentConfig
+--
+name=app
+spec/image=app:sha256....
+]
+
+storage app [
+app
+---
+1
+]
+
+is --> app : scheduled import
+is --> dc :  update image
+
+
+@enduml

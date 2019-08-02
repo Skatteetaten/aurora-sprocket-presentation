@@ -32,23 +32,55 @@ credit:foobar
 === Skatteetaten og Kubernetes
 
 === Background
- * Current solution based on polling the DockerRegistry
- * Part of the OpenShift distribution
+ * Semantic Version based version strategy
+ * BuildConfigs and CustomBuilder for building
+ * Scheduled ImageStreams for rolling out new version
+
+== Aurora Version Strategy
+plantuml::versionStrategy.puml["versionStrategy", png]
+
+=== Strategies
+[#strategies]
+|===
+|Name | Description
+|latest |Any new build
+|1 |New features and patches
+|1.2 | New patches
+|1.2.3 | New infrastructure patches
+|1.2.3-b1.8.1-wingnut11-1.3.1| locked
+|===
+
+== Build
+plantuml::buildConfig.puml["buildConfig1", png]
+
+== BaseImage Change
+plantuml::buildConfig2.puml["buildConfig2", png]
+
+== Code change
+plantuml::buildConfig.puml["buildConfig3", png]
 
 === Updating what is running
  * Scheduled ImageStreams
- * TODO: diagram ImageStream/Dc/DockerRegistry
 
-=== Triggering builds
- * TODO: Diagram buildConfig trigger
- ** BuildTriggers on BaseImages and BuilderLogic
+== Features and bugfixes
+plantuml::imageStream.puml["imageStream1", png]
 
-Bilder problemer
+== Locked
+plantuml::imageStream2.puml["imageStream2", png]
+
+== Infrastructure patches
+plantuml::imageStream3.puml["imageStream3", png]
 
 === Problem #1: Performance
 Polling for new changes to lots of images all the time does not scale
 
-** TODO: Tall, logger. høre med Eivind/Siggen.
+ * Vet ikke hvor mye vits det er å prate mye om dette?
+ * det kan ta 2 sec å pulle et docker image
+ * 1000 som skal sjekkes for
+ * 2 min pause mellom hver gang loopen kjøres
+ * serial
+ * max 120 images per minute
+ * hvis alle fyrer og tar 2 sec
 
 MaxScheduledImageImportsPerMinute=120
 ScheduledImageImportMinimumIntervalSeconds=120
@@ -170,7 +202,11 @@ https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-
  * fallback mechanism that can periodically poll and fire ImageChangeEvent
  * cache part of DockerManifest when an ImageChangeEvent happends
 
-
+=== Expand to other Resources
+ - DeploymentConfig
+ - Deployment/StatefulSet/DaemonSet
+ - Sprocket CRD
+ - BuildConfig
 
 [state=red-font]
 == Image change triggers

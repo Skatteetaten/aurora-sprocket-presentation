@@ -1,0 +1,56 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+database Nexus [
+Nexus
+---
+file:app-1.2.3-Leveransepakke.zip
+]
+
+
+
+storage  architect [
+aurora/architect
+---
+version=1.18.1
+role=CustomBuilder
+]
+
+storage wingnut11 [
+aurora/wingnut11
+---
+version=1.4.0
+role=BaseImage
+]
+
+
+component BuildConfig [
+BuildConfig
+--
+name=app
+version=1.2.3
+aurora_version=1.2.3-b1.18.1-wingnut11-1.4.0
+]
+
+
+storage app [
+app
+---
+latest
+1
+1.2
+1.2.3
+1.2.3-b1.18.1-wingnut11-1.4.0
+]
+
+
+architect -up-> Nexus : fetches zip
+architect --> wingnut11 : FROM
+BuildConfig -down-> architect: trigger on change
+BuildConfig --> wingnut11: trigger on change
+architect --> app : produce
+
+@enduml
