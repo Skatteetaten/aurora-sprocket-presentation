@@ -23,7 +23,6 @@ credit:foobar
 == Agenda
 * *Background*
 * Sprocket
-* Use cases
 * Future plans
 
 == Background
@@ -120,7 +119,6 @@ Updating the base image/builder will fire every single build at the same time
 == Agenda
 * Background
 * *Sprocket*
-* Use cases
 * Future plans
 
 [state=left-box]
@@ -138,8 +136,8 @@ plantuml::sprocket.puml["sprocket", png]
 * filter out garbage events
 * parse event into a ImageChangeEvent(s)
 ** one hosted registry can have several groups so it can fire multiple events
-* find related kubernetes resources
-* perform builds/deployments/imports
+* find related imagestream resources
+* perform image stream import
 
 == Limitations
  * no resilience if event fails
@@ -151,13 +149,6 @@ plantuml::sprocket.puml["sprocket", png]
 == Permissions
  - needs propper RBAC permissions
  -- list ImageStream, create ImageStreamUpdate
-
-== Agenda
-* Background
-* Sprocket
-* *Use cases*
-* Future plans
-
 
 == Use cases
  * Can you just start to use it?
