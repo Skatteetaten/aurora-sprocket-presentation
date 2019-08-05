@@ -12,14 +12,17 @@ component is [
 ImageStream
 --
 name=app
-version=1
+tags
+ - from/name=docker.registry/app/1
+ - name=default
+ - scheduled=true
 ]
 
 component dc [
 DeploymentConfig
 --
 name=app
-spec/image=app:sha256....
+spec/image=docker.registry/app:sha256....
 ]
 
 storage app [
@@ -29,7 +32,7 @@ app
 ]
 
 is --> app : scheduled import
-is --> dc :  update image
+is --> dc :  update spec/image
 
 
 @enduml

@@ -14,41 +14,55 @@ credit:foobar
 
 [state=red-font]
 == Intro
-* Bjarte Stien Karlsen, Architect & Developer in the Norwegian Tax Administration(NTA)
-* Kristoffer Moberg Christensen, Trainee in NTA
+* Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
+* Bjarte Stien Karlsen, Architect & Developer in NTA
 
-[state=red-font]
-
+== Demo1
+ * Show simple asciicinema demo
 
 == Agenda
 * *Background*
 * Sprocket
 * Use cases
-* How can you adopt Sprocket?
-* How to expand on Sprocket?
-* Plans & Improvements
+* Future plans
 
-[state=red-font]
-=== Skatteetaten og Kubernetes
-
-=== Background
+== Background
+ * Running OpenShift since 2015
  * Semantic Version based version strategy
- * BuildConfigs and CustomBuilder for building
+ * BuildConfig, CustomBuilder and triggers for building
  * Scheduled ImageStreams for rolling out new version
 
-== Aurora Version Strategy
-plantuml::versionStrategy.puml["versionStrategy", png]
+== Skatteetaten og Kubernetes
+* 6 clusters
+* 120 nodes
+* 5500 pods
+* on-prem OpenShift 3.11
 
-=== Strategies
+[state=left-box]
+[.image-slide]
+== Semantic version
+image::images/postgres.png[postgres, size=cover]
+[.credit]
+credit:https://hub.docker.com/_/postgres (screenshost)
+
+== Postgres strategy
 [#strategies]
 |===
 |Name | Description
 |latest |Any new build
-|1 |New features and patches
-|1.2 | New patches
-|1.2.3 | New infrastructure patches
-|1.2.3-b1.8.1-wingnut11-1.3.1| locked
+|9 |New features and patches
+|9.6 | New patches
+|9.6.14 | New infrastructure patches
 |===
+ * alpine classifier
+
+== What is missing?
+ * what is the base image when no classifier
+ * what version of the base image is used
+ * what if the build logic changes
+
+== Aurora Version
+plantuml::versionStrategy.puml["versionStrategy", png]
 
 == Build
 plantuml::buildConfig.puml["buildConfig1", png]
@@ -57,46 +71,33 @@ plantuml::buildConfig.puml["buildConfig1", png]
 plantuml::buildConfig2.puml["buildConfig2", png]
 
 == Code change
-plantuml::buildConfig.puml["buildConfig3", png]
+plantuml::buildConfig3.puml["buildConfig3", png]
 
-=== Updating what is running
- * Scheduled ImageStreams
+== Updating what is running
+ * Scheduled ImageStreams Controller
+ * And DeploymentConfig Controller
+ * Both build into OpenShift
 
 == Features and bugfixes
 plantuml::imageStream.puml["imageStream1", png]
 
-== Locked
-plantuml::imageStream2.puml["imageStream2", png]
-
-== Infrastructure patches
-plantuml::imageStream3.puml["imageStream3", png]
-
-=== Problem #1: Performance
+== Problem #1: Performance
 Polling for new changes to lots of images all the time does not scale
 
- * Vet ikke hvor mye vits det er å prate mye om dette?
- * det kan ta 2 sec å pulle et docker image
- * 1000 som skal sjekkes for
- * 2 min pause mellom hver gang loopen kjøres
- * serial
- * max 120 images per minute
- * hvis alle fyrer og tar 2 sec
-
-MaxScheduledImageImportsPerMinute=120
-ScheduledImageImportMinimumIntervalSeconds=120
-
-=== Problem #2: Race condition on multiple triggers
+== Problem #2: Race condition on multiple triggers
 If a Pod has two containers and both have new versions who triggers first?
 
-=== Problem #3: No flow control
+== Problem #3: No flow control
 Updating the base image/builder will fire every single build at the same time
 
-=== Needs
+== Needs
  * push based, reacting to events/webhooks
  * support Nexus (hosted/grouped repos)
+ * support OpenShift resources
  * enable flow control
+ * rate limiting
 
-=== Can OpenSource help?
+== Can OpenSource help?
  * looked at a lot of alternatives
  * most are based on polling
  * most promising is https://keel.sh/docs/#introduction[keel]
@@ -105,11 +106,14 @@ Updating the base image/builder will fire every single build at the same time
  ** does not support Nexus Container Registry
  ** no flow control
 
-=== What primitives can help us here?
+== What primitives can help us here?
  * notifications from DockerRegistries
  * notifications from build pipelines
+ * labels on resources enable efficient queries
+ * label values have limitations, so sha1 the content.
+ * CRD are possible to complex workflow/configuration
 
-=== Build our own
+== Build our own
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
  * Current solution ties us to OpenShift
 
@@ -117,8 +121,7 @@ Updating the base image/builder will fire every single build at the same time
 * Background
 * *Sprocket*
 * Use cases
-* How can you adopt Sprocket?
-* How to expand on Sprocket?
+* Future plans
 
 [state=left-box]
 == Sprocket
@@ -130,98 +133,82 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 == Sprocket MVP
 plantuml::sprocket.puml["sprocket", png]
 
-=== Facts
-* Currently running as a Pilot in our Platform
-* Sprocket is named after the dog in Fraggle Rock
+== Sequence
+* listen to globalEventHook
+* filter out garbage events
+* parse event into a ImageChangeEvent(s)
+** one hosted registry can have several groups so it can fire multiple events
+* find related kubernetes resources
+* perform builds/deployments/imports
 
-=== Limitations
+== Limitations
  * no resilience if event fails
  ** we get an alert from Nexus but nothing automatic
  * only support a single cluster
  * no flow control
  * only support deploy on OpenShift via ImageStream
 
-=== Sequence
- * listen to globalEventHook
- * filter out garbage events
- * parse event into a ImageChangeEvent(s)
- ** one hosted registry can have several groups so it can fire multiple events
- * find related kubernetes resources
- * perform builds/deployments/imports
-
-=== Demo
- * show a video of how Sprocket works
- * building a new image will trigger a deploy on an event
-
-=== Video manus
- - 3 terminaler
- - topp bygg
- - venstre sprocket log
- - høyre: stern for apper
-
- * start bygg uten sprocket annotasjon
- * vis at det kommer sprocket event men ikke at det rulles ut noe
-
- * annoter app 1
- * start bygg, vis at det kommer
- * annoter app 2
- * start bygg, vis at begge kommer
-
-=== Permissions
-- list ImageStream, perform ImageStreamUpdate
-- list, patch Deployment
-- list, rollout DeploymentConfig
-- list BuildConfig, start Build
-- list Sprocket
+== Permissions
+ - needs propper RBAC permissions
+ -- list ImageStream, create ImageStreamUpdate
 
 == Agenda
 * Background
-* *Sprocket*
+* Sprocket
+* *Use cases*
+* Future plans
+
+
+== Use cases
+ * Can you just start to use it?
+ * It depends on how you build and version images
+ * MVP support Nexus Container Registry and ImageStreams
+
+== Version Strategy
+plantuml::versionStrategy.puml["versionStrategy", png]
+
+== Use Sprocket for rolling out "patches"
+ * you rebuild an existing tag when there is a "bug"
+ * usage pattern:
+ ** install sprocket in your cluster
+ ** configure Nexus Docker Registry global event hook
+ ** label you resources
+
+== Agenda
+* Background
+* Sprocket
 * Use cases
-* How can you adopt Sprocket?
-* How to expand on Sprocket?
+* *Future plans*
 
+== Plan: Expand resources
+- DeploymentConfig
+- Deployment/StatefulSet/DaemonSet
+- BuildConfig
+- Sprocket CRD for 1-to-many semantics
+-- utdype alle disse
 
-=== Use cases
-How you can use Sprocket is correlated heavily on how you version your docker images. Does the version change if you change the way you build Docker Images or if the base image changes?
+== Plan: Audit log
+ - Make an audit log of ImageChangeEvents for observability
 
-[state=red-font]
-=== Our version strategy
-https://skatteetaten.github.io/aurora/documentation/openshift/#image-versioning-strategy-the-auroraversion
+== Plan: Cache Manifest
+ * on an ImageChangeEvent cache part of the Manifest for internal use in developer tools
 
-* example from postgresql dockerhub. Screenshot?
-* (Should be elaborated)
+== Plan: Fallback loop
+ * Sometimes events will fail
+ * Create a fallback loop that will periodically check if everything is up to date
+ ** fire a ImageChangeEvent if not up to date
 
-=== Plans
- * rate limiting
- ** label-name: skatteetaten.no/sprocket
- ** rate limit for type of event/action. Only run 100 builds then wait 5 sec
- * avoid duplicate rollouts from a single source
- * distributing ImageChangeEvent to multiple clusters
- * audit logging
- * fallback mechanism that can periodically poll and fire ImageChangeEvent
- * cache part of DockerManifest when an ImageChangeEvent happends
+== Plan: Rate limit and flow control
+ - Enable configuration of rate limit in sprocket
+ - All changes from a single ImageChangeEvent will be flow controlled
+ - Ensure that a single ImageChangeEvent does not fire multiple rollouts of the same resource
 
-=== Expand to other Resources
- - DeploymentConfig
- - Deployment/StatefulSet/DaemonSet
- - Sprocket CRD
- - BuildConfig
+== Plan: Support multiple clusters
+ - distribute the ImageChangeEvent to multiple clusters
+ - option: write to multiple master apis?
+ - option: kafka?
 
-[state=red-font]
-== Image change triggers
-Pushing several tags for the same image allows user to decide when to update the deployment
+== Plan: Tekton
+ - Can tekton be used to enable complex workflows?
+ - Make a ImageChangeEvent something that fires a tekton pipeline
 
-[state=red-font]
-== How can you adopt Sprocket?
-* In your build pipeline push to a tag that is updated when there are new versions released on this release track.
-* In your Deployments listen to this moveable tag and not an immutable tag
-* label your Deployment with an sprocket label that is the hash of the URL to this tag.
-* run sprocket configured to listen to Deployments in this namespace(or all namespaces)
-
-[state=red-font]
-== How to expand on Sprocket?
-* Rate limit changes for one image
-* Invalidate manifest cache
-* support 1-many triggers via a CRD Sprocket.
-* this will enable you to _not_ touch Deployment/ImageStream/DeploymentConfig resources. Only the CRD.

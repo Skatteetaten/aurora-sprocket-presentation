@@ -35,9 +35,9 @@ latest
 ]
 
 
-architect --> app : builder logic
-Nexus --> app : code
-wingnut11 --> app : base
+architect -up-> app : builder logic
+Nexus -up-> app : code
+wingnut11 -up-> app : base
 
 
 

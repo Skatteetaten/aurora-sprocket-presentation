@@ -32,7 +32,6 @@ BuildConfig
 --
 name=app
 version=1.2.3
-aurora_version=1.2.3-b1.18.1-wingnut11-1.4.0
 ]
 
 
