@@ -14,4 +14,23 @@ database Kubernetes
 DockerRegistry --> Sprocket : 1.Send audit events
 Sprocket --> Kubernetes: 2. find and update resources
 
+
+database Nexus
+folder Kafka {
+ storage ImageStreamEvents
+
+storage AffectedResource
+}
+rectangle Doc
+
+Nexus --> Doc : event
+Doc -right-> ImageStreamEvents : ImageStreamEvents
+
+rectangle SprocketUtv1
+rectangle SprocketUtv2
+
+SprocketUtv1 -up-> ImageStreamEvents : subscribe
+SprocketUtv2 --> ImageStreamEvents : subscribe
+SprocketUtv1 -up-> AffectedResource : produce
+SprocketUtv2 --> AffectedResource : produce
 @enduml

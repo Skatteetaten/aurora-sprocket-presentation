@@ -26,16 +26,18 @@ credit:foobar
 * Future plans
 
 == Background
+ * skip?
  * Running OpenShift since 2015
  * Semantic Version based version strategy
  * BuildConfig, CustomBuilder and triggers for building
  * Scheduled ImageStreams for rolling out new version
 
-== Skatteetaten og Kubernetes
-* 6 clusters
+== Our clusters
+* 6 stable-clusters
 * 120 nodes
 * 5500 pods
 * on-prem OpenShift 3.11
+* since 2015
 
 [state=left-box]
 [.image-slide]
@@ -51,7 +53,7 @@ credit:https://hub.docker.com/_/postgres (screenshost)
 |latest |Any new build
 |9 |New features and patches
 |9.6 | New patches
-|9.6.14 | New infrastructure patches
+|9.6.14 | locked
 |===
  * alpine classifier
 
@@ -72,13 +74,11 @@ plantuml::buildConfig2.puml["buildConfig2", png]
 == Code change
 plantuml::buildConfig3.puml["buildConfig3", png]
 
-== Updating what is running
- * Scheduled ImageStreams Controller
- * And DeploymentConfig Controller
- * Both build into OpenShift
+== Update
+plantuml::imageStream.puml["imageStream", png]
 
-== Features and bugfixes
-plantuml::imageStream.puml["imageStream1", png]
+== New base image
+plantuml::imageStream1.puml["imageStream1", png]
 
 == Problem #1: Performance
 Polling for new changes to lots of images all the time does not scale
@@ -172,14 +172,19 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 * *Future plans*
 
 == Plan: Expand resources
-- DeploymentConfig
-- Deployment/StatefulSet/DaemonSet
+- Deployment
 - BuildConfig
 - Sprocket CRD for 1-to-many semantics
 -- utdype alle disse
 
+== Plan: Rate limit and flow control
+- Enable configuration of rate limit in sprocket
+- All changes from a single ImageChangeEvent will be flow controlled
+- Ensure that a single ImageChangeEvent does not fire multiple rollouts of the same resource
+
 == Plan: Audit log
  - Make an audit log of ImageChangeEvents for observability
+ - splunk
 
 == Plan: Cache Manifest
  * on an ImageChangeEvent cache part of the Manifest for internal use in developer tools
@@ -188,11 +193,6 @@ plantuml::versionStrategy.puml["versionStrategy", png]
  * Sometimes events will fail
  * Create a fallback loop that will periodically check if everything is up to date
  ** fire a ImageChangeEvent if not up to date
-
-== Plan: Rate limit and flow control
- - Enable configuration of rate limit in sprocket
- - All changes from a single ImageChangeEvent will be flow controlled
- - Ensure that a single ImageChangeEvent does not fire multiple rollouts of the same resource
 
 == Plan: Support multiple clusters
  - distribute the ImageChangeEvent to multiple clusters

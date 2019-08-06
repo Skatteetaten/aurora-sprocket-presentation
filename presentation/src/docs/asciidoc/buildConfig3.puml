@@ -38,11 +38,16 @@ version=1.3.0
 storage app [
 app
 ---
-latest
-1
-1.3
-1.3.0
-1.3.0-b1.18.1-wingnut11-1.4.0
+sha256:d72 latest
+sha256:d72 1
+sha256:d72 1.3
+sha256:d72 1.3.0
+sha256:d72 1.3.0-b1.18.1-wingnut11-1.4.0
+--
+sha256:c4d 1.2
+sha256:c4d 1.2.3
+sha256:c4d 1.2.3-b1.18.1-wingnut11-1.4.0
+sha256:a1b 1.2.3-b1.18.1-wingnut11-1.3.1
 ]
 
 
@@ -50,6 +55,6 @@ architect -up-> Nexus : fetches zip
 architect --> wingnut11 : FROM
 BuildConfig -down-> architect: trigger on change
 BuildConfig --> wingnut11: trigger on change
-architect --> app : produce
+architect --> app : produce d72
 
 @enduml
