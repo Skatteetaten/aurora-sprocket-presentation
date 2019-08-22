@@ -83,14 +83,18 @@ plantuml::imageStream.puml["imageStream", png]
 plantuml::imageStream1.puml["imageStream1", png]
 
 // Kristoffer
-== Problem #1: Performance
+== Issue #1: Performance
 Polling for new changes to lots of images all the time does not scale
 
-== Problem #2: Race condition on multiple triggers
+== Issue #2: Race condition on multiple triggers
 If a Pod has two containers and both have new versions who triggers first?
 
-== Problem #3: No flow control
+== Issue #3: No flow control
 Updating the base image/builder will fire every single build at the same time
+
+== Issue #4: OpenShift
+Current solution ties us to OpenShift
+
 
 == Needs
  * push based, reacting to events/webhooks
@@ -110,7 +114,6 @@ Updating the base image/builder will fire every single build at the same time
 
 == What primitives can help us here?
  * notifications from DockerRegistries
- * notifications from build pipelines
  * labels on resources enable efficient queries
  * label values have limitations, so sha1 the content.
  * CRD are possible to complex workflow/configuration
@@ -135,7 +138,6 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 == Sprocket
 plantuml::sprocket.puml["sprocket", png]
 
-
 == Sprocket
 * multiple instances
 * leader election
@@ -144,12 +146,11 @@ plantuml::sprocket.puml["sprocket", png]
 == Node
 plantuml::sprocket-flowcontrol-node.puml["sprocket-flowcontrol-node", png]
 
-== Resources
-plantuml::sprocket-flow.puml["sprocket-flow", png]
-
 == Leader
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
+== Resources
+plantuml::sprocket-flow.puml["sprocket-flow", png]
 
 // Sprocket-1.1, Sprocket-1.2
 // Sprokcet-1.1: har noen lease? NEI. jeg tar lease og starter prosessene
@@ -171,11 +172,16 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 // Sprocket-1.2: dør
 // R3 -> Sprocket-2.2: har noen lease? Nei? Okai jeg tar den.
 
+== One to many
+ - Builds trigger both on base image and builder logic
+ - Deployments can have multiple pods/init-containers
+
 == Limitations
  * no resilience if event fails
  ** we get an alert from Nexus but nothing automatic
- *
 
+
+//
 == Use cases
  * Can you just start to use it?
  * It depends on how you build and version images
@@ -197,20 +203,12 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 * Use cases
 * *Future plans*
 
-== Plan: Expand resources
-- Deployment
-- BuildConfig
-- Sprocket CRD for 1-to-many semantics
--- utdype alle disse
-
-== Plan: Rate limit and flow control
-- Enable configuration of rate limit in sprocket
-- All changes from a single ImageChangeEvent will be flow controlled
-- Ensure that a single ImageChangeEvent does not fire multiple rollouts of the same resource
-
-== Plan: Audit log
- - Make an audit log of ImageChangeEvents for observability
- - splunk
+== Plan: Management
+ - api to view what is in the queue
+ - ability to pause an runner
+ - ability to change runner parameters
+ -- bulk size
+ -- delay
 
 == Plan: Cache Manifest
  * on an ImageChangeEvent cache part of the Manifest for internal use in developer tools
@@ -220,12 +218,14 @@ plantuml::versionStrategy.puml["versionStrategy", png]
  * Create a fallback loop that will periodically check if everything is up to date
  ** fire a ImageChangeEvent if not up to date
 
-== Plan: Support multiple clusters
- - distribute the ImageChangeEvent to multiple clusters
- - option: write to multiple master apis?
- - option: kafka?
-
 == Plan: Tekton
  - Can tekton be used to enable complex workflows?
  - Make a ImageChangeEvent something that fires a tekton pipeline
+
+== Plan: Testing
+ - When releasing a new base image you want to ensure that it does not impose any regressions.
+ - When there is an ImageChangeEvent for a base image start a manual tekton pipeline to test it first before addings elements to the queue?
+
+
+
 
