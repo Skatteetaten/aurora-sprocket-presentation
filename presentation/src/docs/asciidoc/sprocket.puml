@@ -5,32 +5,19 @@ skinparam  BackgroundColor white
 
 
 
-database DockerRegistry
+database NexusDockerRegistry
 rectangle Sprocket
 
-database Kubernetes
+database utv<<kubernetes>>
+database test<<kubernetes>>
+
+database SprocketDb<<sprocket>>
+
+NexusDockerRegistry --> Sprocket : 1.Send audit events
+Sprocket --> test: 2. find resources   \n 4. update resources
+Sprocket --> utv: 2. find resources   \n 4. update resources
+Sprocket --> Sprocket: 3. flow control
+Sprocket -left-> SprocketDb: state
 
 
-DockerRegistry --> Sprocket : 1.Send audit events
-Sprocket --> Kubernetes: 2. find and update resources
-
-
-database Nexus
-folder Kafka {
- storage ImageStreamEvents
-
-storage AffectedResource
-}
-rectangle Doc
-
-Nexus --> Doc : event
-Doc -right-> ImageStreamEvents : ImageStreamEvents
-
-rectangle SprocketUtv1
-rectangle SprocketUtv2
-
-SprocketUtv1 -up-> ImageStreamEvents : subscribe
-SprocketUtv2 --> ImageStreamEvents : subscribe
-SprocketUtv1 -up-> AffectedResource : produce
-SprocketUtv2 --> AffectedResource : produce
 @enduml

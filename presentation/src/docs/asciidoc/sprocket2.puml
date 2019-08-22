@@ -1,0 +1,29 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+database Nexus
+folder Kafka {
+ storage ImageStreamEvents
+
+storage AffectedResource
+}
+rectangle Sprocket0
+
+database Kubernetes1
+database Kubernetes2
+Nexus --> Sprocket0 : event
+Sprocket0 -right-> ImageStreamEvents : ImageStreamEvents
+
+rectangle Sprocket1
+rectangle Sprocket2
+
+Sprocket1 -up-> ImageStreamEvents : 1.subscribe
+Sprocket1 -up-> AffectedResource : 3. produce
+Sprocket1 --> Kubernetes1 : 2. find affected resources
+Sprocket1 --> Kubernetes2 : 2. find affected resources
+Sprocket2 -up-> AffectedResource : 1. subscribe
+Sprocket2 --> Kubernetes1 : 2. update
+Sprocket2 --> Kubernetes2 : 2. update
+@enduml

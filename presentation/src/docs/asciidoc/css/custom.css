@@ -2,14 +2,13 @@
     font-size: 2em;
 }
 
-.reveal section[data-state="left-box"] h2 {
+.left-box {
     color: white;
     background: rgba(25, 25, 25, .4);
     border-radius: 20px;
     margin-left: -1em;
     margin-right: 7em;
 }
-
 
 .reveal section[data-state="right-box"] h2 {
     color: white;

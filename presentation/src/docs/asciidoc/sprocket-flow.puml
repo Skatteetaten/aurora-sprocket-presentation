@@ -11,18 +11,13 @@ package ImageChangeEvent [
  tag=1
 ]
 
-rectangle DeploymentConfig [
- DeploymentConfig
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
-]
 component ImageStream [
  ImageStream
  ---
  skatteetaten.no/sprocket=sha1-abcdefg
 ]
-rectangle Sprocket [
- Sprocket
+component Sprocket [
+ Sprocket CRD
  ---
   skatteetaten.no/sprocket=sha1-abcdefg
  ---
@@ -32,13 +27,13 @@ rectangle Sprocket [
  - namespace: env
 ]
 
-rectangle BuildConfig [
+component BuildConfig [
  BuildConfig
  ---
  skatteetaten.no/sprocket=sha1-abcdefg
 ]
 
-rectangle Deployment [
+component Deployment [
  Deployment
  ---
  skatteetaten.no/sprocket=sha1-abcdefg
@@ -46,7 +41,6 @@ rectangle Deployment [
 
 
 ImageChangeEvent --> findEvents : sha1-abcdefg
-findEvents --> DeploymentConfig
 findEvents -right-> Deployment
 findEvents -left-> ImageStream
 findEvents --> Sprocket

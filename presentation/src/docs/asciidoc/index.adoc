@@ -6,6 +6,7 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
 :revnumber: {project-version}
 
+//Kristoffer
 [.image-slide]
 == [.underline]#*CRITICAL VULNERABILITY*# out that affects all your images.
 image::images/security-bug.jpg[canvas, size=cover]
@@ -17,29 +18,29 @@ credit:foobar
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 * Bjarte Stien Karlsen, Architect & Developer in NTA
 
+// Bjarte
 == Demo1
  * Show simple asciicinema demo
 
+// Kristoffer
 == Agenda
 * *Background*
 * Sprocket
 * Future plans
 
 == Background
- * skip?
  * Running OpenShift since 2015
  * Semantic Version based version strategy
  * BuildConfig, CustomBuilder and triggers for building
- * Scheduled ImageStreams for rolling out new version
+ * Scheduled ImageStreams for Continous Delivery (CD)
 
 == Our clusters
 * 6 stable-clusters
 * 120 nodes
 * 5500 pods
 * on-prem OpenShift 3.11
-* since 2015
 
-[state=left-box]
+[.left-box]
 [.image-slide]
 == Semantic version
 image::images/postgres.png[postgres, size=cover]
@@ -62,6 +63,7 @@ credit:https://hub.docker.com/_/postgres (screenshost)
  * what version of the base image is used
  * what if the build logic changes
 
+// Bjarte
 == Aurora Version
 plantuml::versionStrategy.puml["versionStrategy", png]
 
@@ -80,6 +82,7 @@ plantuml::imageStream.puml["imageStream", png]
 == New base image
 plantuml::imageStream1.puml["imageStream1", png]
 
+// Kristoffer
 == Problem #1: Performance
 Polling for new changes to lots of images all the time does not scale
 
@@ -116,6 +119,7 @@ Updating the base image/builder will fire every single build at the same time
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
  * Current solution ties us to OpenShift
 
+// Bjarte
 == Agenda
 * Background
 * *Sprocket*
@@ -128,27 +132,49 @@ image::images/sprocket.jpg[canvas, size=cover]
 credit:https://barkpost.com/cute/the-best-muppet-dogs/
 
 [state=red-font]
-== Sprocket MVP
+== Sprocket
 plantuml::sprocket.puml["sprocket", png]
 
-== Sequence
-* listen to globalEventHook
-* filter out garbage events
-* parse event into a ImageChangeEvent(s)
-** one hosted registry can have several groups so it can fire multiple events
-* find related imagestream resources
-* perform image stream import
+
+== Sprocket
+* multiple instances
+* leader election
+* all instance are nodes but only a single leader
+
+== Node
+plantuml::sprocket-flowcontrol-node.puml["sprocket-flowcontrol-node", png]
+
+== Resources
+plantuml::sprocket-flow.puml["sprocket-flow", png]
+
+== Leader
+plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
+
+
+// Sprocket-1.1, Sprocket-1.2
+// Sprokcet-1.1: har noen lease? NEI. jeg tar lease og starter prosessene
+// Builds: count=2, sleep=30s
+// Deploy: count=2, sleep=10s
+// R1: app1, app2, app3
+// State: app1, app2, app3
+// Process runs with app1 and app2, lease in db: now+2min
+// State: app3
+// R2: app1, app4, app3 (persist app1, app4, app3, men også hva som legges i køen?)
+// State: app3, app1, app4,
+// Process runs with app3 and app1, lease in db: now+2min
+// State: app4
+// Process runs with app3 and app1, lease in db: now+2min
+// deploy Sprocket 2
+// Sprocket-2.1: Har noen lease Ja.
+// Sprocket-2.2: Har noen lease? Nei.
+// Sprocket-1.1: dør
+// Sprocket-1.2: dør
+// R3 -> Sprocket-2.2: har noen lease? Nei? Okai jeg tar den.
 
 == Limitations
  * no resilience if event fails
  ** we get an alert from Nexus but nothing automatic
- * only support a single cluster
- * no flow control
- * only support deploy on OpenShift via ImageStream
-
-== Permissions
- - needs propper RBAC permissions
- -- list ImageStream, create ImageStreamUpdate
+ *
 
 == Use cases
  * Can you just start to use it?
