@@ -1,0 +1,59 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+() findEvents as " "
+
+package ImageChangeEvent [
+ registry=docker.skatteetaten.no
+ name=no.skatteetaten.demo/whoami
+ tag=1
+]
+
+component ImageStream [
+ ImageStream
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+]
+component Sprocket [
+ Sprocket CRD
+ ---
+  skatteetaten.no/sprocket=sha1-abcdefg
+ ---
+ spec:
+ - kind: BuildConfig
+ - name: app
+ - namespace: env
+]
+
+component BuildConfig [
+ BuildConfig
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+]
+
+component Deployment [
+ Deployment
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+]
+
+
+ImageChangeEvent --> findEvents : sha1-abcdefg
+findEvents -right-> Deployment
+findEvents -left-> ImageStream
+findEvents --> Sprocket
+findEvents --> BuildConfig
+
+
+
+
+
+
+
+
+
+
+
+@enduml

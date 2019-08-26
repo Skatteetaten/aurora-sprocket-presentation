@@ -1,0 +1,45 @@
+@startuml
+!include skatt.iuml
+
+database Nexus [
+Nexus
+---
+app-1.2.3-Leveransepakke.zip
+]
+
+
+
+storage  architect [
+aurora/architect
+---
+version=1.18.1
+role=CustomBuilder
+]
+
+storage wingnut11 [
+aurora/wingnut11
+---
+version=1.3.1
+role=BaseImage
+]
+
+
+storage app [
+app
+---
+latest
+1
+1.2
+1.2.3
+1.2.3-b1.18.1-wingnut11-1.3.1
+]
+
+
+architect -up-> app : builder logic
+Nexus -up-> app : code
+wingnut11 -up-> app : base
+
+
+
+
+@enduml

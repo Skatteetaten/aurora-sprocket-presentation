@@ -1,0 +1,23 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+database NexusDockerRegistry
+rectangle Sprocket
+
+database utv<<kubernetes>>
+database test<<kubernetes>>
+
+database SprocketDb<<sprocket>>
+
+NexusDockerRegistry --> Sprocket : 1.Send audit events
+Sprocket --> test: 2. find resources   \n 4. update resources
+Sprocket --> utv: 2. find resources   \n 4. update resources
+Sprocket --> Sprocket: 3. flow control
+Sprocket -left-> SprocketDb: state
+
+
+@enduml

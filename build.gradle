@@ -1,0 +1,46 @@
+plugins {
+  id "org.asciidoctor.jvm.revealjs" version "3.0.0-alpha.3"
+}
+
+repositories {
+  maven { url 'http://rubygems-proxy.torquebox.org/releases' }
+  mavenCentral()
+  jcenter()
+}
+
+asciidoctorj {
+  modules {
+    diagram {
+      version '1.5.18'
+    }
+  }
+}
+
+asciidoctorRevealJs {
+  baseDirFollowsSourceDir()
+  sourceDir 'src/docs/asciidoc'
+  sources {
+    include 'index.adoc'
+  }
+  resources {
+    from('src/docs/asciidoc') {
+      include 'style/*.svg'
+      include 'images/*'
+    }
+  }
+  attributes 'sourceDir': 'src/docs/asciidoc',
+      'imagesDir': '',
+      'icons': 'font',
+      'iconfont-name': 'fontawesome-5.8.0'
+  revealjsOptions {
+    controls = true
+    slideNumber = true
+    progressBar = true
+    pushToHistory = true
+    overviewMode = true
+    touchMode = true
+    backgroundTransition = 'fade'
+    customThemeLocation = 'src/docs/asciidoc/style/skatt.css'
+    theme = 'skatt'
+  }
+}

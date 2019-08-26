@@ -1,0 +1,43 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+
+
+database KubernetesP<<kubernetes>> [
+prod
+]
+
+database KubernetesU<<kubernetes>> [
+utv
+]
+
+database KubernetesT<<kubernetes>> [
+test
+]
+
+rectangle BuildRunner<<leader>>
+rectangle DeployProdRunner<<leader>>
+rectangle DeployTestRunner<<leader>>
+rectangle DeployUtvRunner<<leader>>
+
+ database ResourceQueue<<sprocket>>
+
+
+
+BuildRunner --> ResourceQueue : 1.fetch affected builds
+BuildRunner --> KubernetesU : 2. start builds
+
+DeployProdRunner --> ResourceQueue : 1. fetch deploys for prod
+DeployProdRunner --> KubernetesP : 2. deploy
+
+DeployTestRunner -up-> ResourceQueue : 1. fetch deploys for test
+DeployTestRunner --> KubernetesT : 2. deploy
+
+DeployUtvRunner -up-> ResourceQueue : 1. fetch deploys for utv
+DeployUtvRunner --> KubernetesU : 2. deploy
+@enduml

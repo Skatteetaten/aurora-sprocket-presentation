@@ -1,0 +1,43 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+database DockerRegistry
+
+folder Sprocket {
+
+rectangle Sprocket1 [
+SprocketLeader
+]
+rectangle Sprocket2
+
+}
+
+database Kubernetes [
+kubernetes test
+]
+
+database KubernetesP [
+kubernetes prod
+]
+
+
+folder SprocketDb {
+
+ database ImageChangeEvents
+ database AffectedResources
+
+}
+
+DockerRegistry -left-> Sprocket2 : 1.Send audit events
+Sprocket2 --> Kubernetes: 2. find resources
+Sprocket2 --> KubernetesP: 2. find resources
+Sprocket2 -up-> ImageChangeEvents: 1. store
+Sprocket2 -up-> AffectedResources: 3.store
+
+Sprocket1 --> AffectedResources: 1. get new
+@enduml
