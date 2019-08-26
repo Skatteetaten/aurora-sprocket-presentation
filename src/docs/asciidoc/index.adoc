@@ -33,13 +33,14 @@ Nytt base image foo/bar:1@c2k : prod@a1b
 
 [state=red-font]
 == Intro
-* Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 * Bjarte Stien Karlsen, Architect & Developer in NTA
+* Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 
 == Questions?
 * Time at the end for questions
 * Or come to our stand, we will both be there after the talk
 
+// 3 min. 1. run
 // 5 min
 
 == Agenda
@@ -63,6 +64,7 @@ Nytt base image foo/bar:1@c2k : prod@a1b
 * on-prem OpenShift 3.11
 
 //Kristoffer
+
 [.left-box]
 [.image-slide]
 == Semantic version
@@ -73,11 +75,11 @@ credit:https://hub.docker.com/_/postgres (screenshost)
 == Postgres strategy
 [#strategies]
 |===
-|Name | Description
-|latest |Any new build
-|9 |New features and patches
-|9.6 | New patches
-|9.6.14 | locked
+|Name   | Description
+|latest | Any new build
+|9      | New features and patches
+|9.6    | New patches
+|9.6.14 | New when base image changes/builder
 |===
  * alpine classifier
 
@@ -85,6 +87,10 @@ credit:https://hub.docker.com/_/postgres (screenshost)
  * what is the base image when no classifier
  * what version of the base image is used
  * what if the build logic changes
+
+// Bjarte
+== Aurora Version
+plantuml::versionStrategy.puml["versionStrategy", png]
 
 // 5 min
 
@@ -95,10 +101,6 @@ credit:https://hub.docker.com/_/postgres (screenshost)
 * Introducing Sprocket
 * How to use Sprocket
 * Future plans
-
-// Bjarte
-== Aurora Version
-plantuml::versionStrategy.puml["versionStrategy", png]
 
 == Build
 plantuml::buildConfig.puml["buildConfig1", png]
