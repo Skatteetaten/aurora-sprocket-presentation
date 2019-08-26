@@ -13,26 +13,48 @@ image::images/security-bug.jpg[canvas, size=cover]
 [.credit]
 credit:foobar
 
+// 1:     a1b
+// 1.2:   a1b
+// 1.2.3: a1b*
+// test:  a1b
+// prod:  c5k
+
+//tagge test -> prod
+// <siste patch>> --> test
+
+Tag: foo/bar:1@a1b -> foo/bar: prod
+Nytt base image foo/bar:1@c2k : prod@a1b
+
+// Hard kobling mellom CI (jenkins?) og hvilke miljøer som skal ha ny versjon?
+
+// Bjarte
+== Demo1
+* Show simple asciicinema demo
+
 [state=red-font]
 == Intro
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 * Bjarte Stien Karlsen, Architect & Developer in NTA
 
-// Bjarte
-== Demo1
- * Show simple asciicinema demo
+== Questions?
+* Time at the end for questions
+* Or come to our stand, we will both be there after the talk
 
-// Kristoffer
+// 5 min
+
 == Agenda
-* *Background*
-* Sprocket
+* *Skatteetaten(NTA) and Kubernetes*
+* Our old CD pipeline
+* Needs for CD pipeline
+* Introducing Sprocket
+* How to use Sprocket
 * Future plans
 
-== Background
+== PaaS in NTA
  * Running OpenShift since 2015
  * Semantic Version based version strategy
  * BuildConfig, CustomBuilder and triggers for building
- * Scheduled ImageStreams for Continous Delivery (CD)
+ * Scheduled ImageStreams for Continuous Delivery (CD)
 
 == Our clusters
 * 6 stable-clusters
@@ -40,6 +62,7 @@ credit:foobar
 * 5500 pods
 * on-prem OpenShift 3.11
 
+//Kristoffer
 [.left-box]
 [.image-slide]
 == Semantic version
@@ -63,6 +86,16 @@ credit:https://hub.docker.com/_/postgres (screenshost)
  * what version of the base image is used
  * what if the build logic changes
 
+// 5 min
+
+== Agenda
+* Skatteetaten(NTA) and Kubernetes
+* *Our old CD pipeline*
+* Needs for CD pipeline
+* Introducing Sprocket
+* How to use Sprocket
+* Future plans
+
 // Bjarte
 == Aurora Version
 plantuml::versionStrategy.puml["versionStrategy", png]
@@ -76,15 +109,15 @@ plantuml::buildConfig2.puml["buildConfig2", png]
 == Code change
 plantuml::buildConfig3.puml["buildConfig3", png]
 
+// Kristoffer
 == Update
 plantuml::imageStream.puml["imageStream", png]
 
 == New base image
 plantuml::imageStream1.puml["imageStream1", png]
 
-// Kristoffer
 == Issue #1: Performance
-Polling for new changes to lots of images all the time does not scale
+Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
 
 == Issue #2: Race condition on multiple triggers
 If a Pod has two containers and both have new versions who triggers first?
@@ -95,7 +128,17 @@ Updating the base image/builder will fire every single build at the same time
 == Issue #4: OpenShift
 Current solution ties us to OpenShift
 
+// 10 min
 
+== Agenda
+* Skatteetaten(NTA) and Kubernetes
+* Our old CD pipeline
+* *Needs for CD pipeline*
+* Introducing Sprocket
+* How to use Sprocket
+* Future plans
+
+// Bjarte
 == Needs
  * push based, reacting to events/webhooks
  * support Nexus (hosted/grouped repos)
@@ -122,10 +165,15 @@ Current solution ties us to OpenShift
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
  * Current solution ties us to OpenShift
 
-// Bjarte
+// 5 min
+
+// Kristoffer
 == Agenda
-* Background
-* *Sprocket*
+* Skatteetaten(NTA) and Kubernetes
+* Our old CD pipeline
+* Needs for CD pipeline
+* *Introducing Sprocket*
+* How to use Sprocket
 * Future plans
 
 [state=left-box]
@@ -143,6 +191,7 @@ plantuml::sprocket.puml["sprocket", png]
 * leader election
 * all instance are nodes but only a single leader
 
+// Bjarte
 == Node
 plantuml::sprocket-flowcontrol-node.puml["sprocket-flowcontrol-node", png]
 
@@ -152,36 +201,28 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 == Resources
 plantuml::sprocket-flow.puml["sprocket-flow", png]
 
-// Sprocket-1.1, Sprocket-1.2
-// Sprokcet-1.1: har noen lease? NEI. jeg tar lease og starter prosessene
-// Builds: count=2, sleep=30s
-// Deploy: count=2, sleep=10s
-// R1: app1, app2, app3
-// State: app1, app2, app3
-// Process runs with app1 and app2, lease in db: now+2min
-// State: app3
-// R2: app1, app4, app3 (persist app1, app4, app3, men også hva som legges i køen?)
-// State: app3, app1, app4,
-// Process runs with app3 and app1, lease in db: now+2min
-// State: app4
-// Process runs with app3 and app1, lease in db: now+2min
-// deploy Sprocket 2
-// Sprocket-2.1: Har noen lease Ja.
-// Sprocket-2.2: Har noen lease? Nei.
-// Sprocket-1.1: dør
-// Sprocket-1.2: dør
-// R3 -> Sprocket-2.2: har noen lease? Nei? Okai jeg tar den.
-
 == One to many
  - Builds trigger both on base image and builder logic
  - Deployments can have multiple pods/init-containers
 
-== Limitations
+
+// Kristoffer
+== Missing pieces
  * no resilience if event fails
  ** we get an alert from Nexus but nothing automatic
 
+// 10 min
 
-//
+// Kan jeg bruke det nå?
+// Hva må jeg gjøre for å ta det i bruk?
+== Agenda
+* Skatteetaten(NTA) and Kubernetes
+* Our old CD pipeline
+* Needs for CD pipeline
+* Introducing Sprocket
+* *How to use Sprocket*
+* Future plans
+
 == Use cases
  * Can you just start to use it?
  * It depends on how you build and version images
@@ -197,35 +238,45 @@ plantuml::versionStrategy.puml["versionStrategy", png]
  ** configure Nexus Docker Registry global event hook
  ** label you resources
 
+// 5 min
+
 == Agenda
-* Background
-* Sprocket
-* Use cases
+* Skatteetaten(NTA) and Kubernetes
+* Our old CD pipeline
+* Needs for CD pipeline
+* Introducing Sprocket
+* How to use Sprocket
 * *Future plans*
 
-== Plan: Management
+== Support CloudEvents
+ - for supporting different events then nexus
+
+== Management
  - api to view what is in the queue
  - ability to pause an runner
  - ability to change runner parameters
  -- bulk size
  -- delay
+ - approvals? (before tagging a prod docker tag require approval)
 
-== Plan: Cache Manifest
- * on an ImageChangeEvent cache part of the Manifest for internal use in developer tools
+== Cache Manifest
+ * invalidate cache of tags if there is a new tag
+ * invalidate manifest cache if tag changed
 
-== Plan: Fallback loop
+== Fallback loop
  * Sometimes events will fail
  * Create a fallback loop that will periodically check if everything is up to date
  ** fire a ImageChangeEvent if not up to date
 
-== Plan: Tekton
+== Tekton
  - Can tekton be used to enable complex workflows?
  - Make a ImageChangeEvent something that fires a tekton pipeline
 
-== Plan: Testing
+== Testing
  - When releasing a new base image you want to ensure that it does not impose any regressions.
  - When there is an ImageChangeEvent for a base image start a manual tekton pipeline to test it first before addings elements to the queue?
 
+== Approval alerts to slack/mattermost
+ - when a sprocket CRD fires that require approval
 
-
-
+// 10 min
