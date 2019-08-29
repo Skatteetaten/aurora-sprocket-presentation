@@ -12,6 +12,7 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 image::images/security-bug.jpg[canvas, size=cover]
 [.credit]
 credit:foobar
+// Gjør denne dramatisk
 
 // 1:     a1b
 // 1.2:   a1b
@@ -26,6 +27,13 @@ Tag: foo/bar:1@a1b -> foo/bar: prod
 Nytt base image foo/bar:1@c2k : prod@a1b
 
 // Hard kobling mellom CI (jenkins?) og hvilke miljøer som skal ha ny versjon?
+
+//== We can help
+// * Install Sprocket and configure it for listening to Deployments in your cluster
+// * Set up Nexus global event hook to send events to Sprocket
+// * label your Deployment with the sprocket label
+// * build new image
+// * new ReplicaSet will be rolled out
 
 // Bjarte
 == Demo1
@@ -250,25 +258,29 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 * How to use Sprocket
 * *Future plans*
 
-== Support CloudEvents
- - for supporting different events then nexus
+== Approval alerts to slack/mattermost
+- when a sprocket CRD fires that require approval
 
 == Management
- - api to view what is in the queue
- - ability to pause an runner
- - ability to change runner parameters
- -- bulk size
- -- delay
- - approvals? (before tagging a prod docker tag require approval)
+- api to view what is in the queue
+- ability to pause an runner
+- ability to change runner parameters
+-- bulk size
+-- delay
+- approvals? (before tagging a prod docker tag require approval)
+
+== Fallback loop
+* Sometimes events will fail
+* Create a fallback loop that will periodically check if everything is up to date
+** fire a ImageChangeEvent if not up to date
 
 == Cache Manifest
  * invalidate cache of tags if there is a new tag
  * invalidate manifest cache if tag changed
 
-== Fallback loop
- * Sometimes events will fail
- * Create a fallback loop that will periodically check if everything is up to date
- ** fire a ImageChangeEvent if not up to date
+== Support CloudEvents
+- for supporting different events then nexus
+- send event when your base distribution base image changes (ubi/alpine)
 
 == Tekton
  - Can tekton be used to enable complex workflows?
@@ -278,7 +290,17 @@ plantuml::versionStrategy.puml["versionStrategy", png]
  - When releasing a new base image you want to ensure that it does not impose any regressions.
  - When there is an ImageChangeEvent for a base image start a manual tekton pipeline to test it first before addings elements to the queue?
 
-== Approval alerts to slack/mattermost
- - when a sprocket CRD fires that require approval
-
 // 10 min
+// Konklusjonslide
+
+== Conclusion
+ - Create tools and processes to automate CD
+ - Prefer push based model
+ - Crate fallback pull based loops for resiliency
+
+== Fin
+ - https://github.com/skatteetaten/sprocket
+ - https://skatteetaten.github.io/aurora/
+ - Come to our stand to talk more!
+
+
