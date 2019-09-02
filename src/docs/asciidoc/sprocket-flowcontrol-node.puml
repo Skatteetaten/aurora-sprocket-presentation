@@ -20,6 +20,7 @@ database KubernetesT<<kubernetes>> [
 test
 ]
 
+
 rectangle ImageChangeEventParser<<node>>
 rectangle ResourceFetcher<<node>>
 rectangle ResourceFilterer<<node>>
@@ -36,8 +37,8 @@ ResourceFetcher --> KubernetesU : 4. fetch utv resources
 ResourceFetcher --> KubernetesT : 4. fetch test resources
 ResourceFetcher --> KubernetesP : 4. fetch prod resources
 ResourceFetcher -left-> AffectedResources : 5. store
-ResourceFetcher -right-> ResourceFilterer : 6. filter out existing resources not run yet
+ResourceFetcher -right-> ResourceFilterer : 6. filter resources
 
-ResourceFilterer --> ResourceQueue : 5. store
+ResourceFilterer --> ResourceQueue : 7. store
 
 @enduml

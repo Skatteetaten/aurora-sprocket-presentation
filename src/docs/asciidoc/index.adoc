@@ -12,6 +12,7 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 image::images/security-bug.jpg[canvas, size=cover]
 [.credit]
 credit:foobar
+
 // Gjør denne dramatisk
 
 // 1:     a1b
@@ -23,8 +24,8 @@ credit:foobar
 //tagge test -> prod
 // <siste patch>> --> test
 
-Tag: foo/bar:1@a1b -> foo/bar: prod
-Nytt base image foo/bar:1@c2k : prod@a1b
+//Tag: foo/bar:1@a1b -> foo/bar: prod
+//Nytt base image foo/bar:1@c2k : prod@a1b
 
 // Hard kobling mellom CI (jenkins?) og hvilke miljøer som skal ha ny versjon?
 
@@ -35,29 +36,34 @@ Nytt base image foo/bar:1@c2k : prod@a1b
 // * build new image
 // * new ReplicaSet will be rolled out
 
-// Bjarte
-== Demo1
-* Show simple asciicinema demo
-
 [state=red-font]
 == Intro
-* Bjarte Stien Karlsen, Architect & Developer in NTA
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
+* Bjarte Stien Karlsen, Architect & Developer in NTA
+
+// Bjarte
+== Sprocket MVP demo
+* Show simple asciicinema demo
+// run build, nothing happens?
+
+//Sprocket is running
+//Show configuration
+//label resource
+
+// run build, it works
+
 
 == Questions?
 * Time at the end for questions
 * Or come to our stand, we will both be there after the talk
 
-// 3 min. 1. run
-// 5 min
-
+// Agenda
 == Agenda
 * *Skatteetaten(NTA) and Kubernetes*
-* Our old CD pipeline
-* Needs for CD pipeline
-* Introducing Sprocket
-* How to use Sprocket
-* Future plans
+* Status quo and problems?
+* Needs and requirements
+* Sprocket MVP
+* Sprocket 1.0
 
 == PaaS in NTA
  * Running OpenShift since 2015
@@ -75,7 +81,8 @@ Nytt base image foo/bar:1@c2k : prod@a1b
 
 [.left-box]
 [.image-slide]
-== Semantic version
+== !
+//Semantic version
 image::images/postgres.png[postgres, size=cover]
 [.credit]
 credit:https://hub.docker.com/_/postgres (screenshost)
@@ -89,7 +96,6 @@ credit:https://hub.docker.com/_/postgres (screenshost)
 |9.6    | New patches
 |9.6.14 | New when base image changes/builder
 |===
- * alpine classifier
 
 == What is missing?
  * what is the base image when no classifier
@@ -100,15 +106,7 @@ credit:https://hub.docker.com/_/postgres (screenshost)
 == Aurora Version
 plantuml::versionStrategy.puml["versionStrategy", png]
 
-// 5 min
-
-== Agenda
-* Skatteetaten(NTA) and Kubernetes
-* *Our old CD pipeline*
-* Needs for CD pipeline
-* Introducing Sprocket
-* How to use Sprocket
-* Future plans
+== Current CD pipeline
 
 == Build
 plantuml::buildConfig.puml["buildConfig1", png]
@@ -129,24 +127,14 @@ plantuml::imageStream1.puml["imageStream1", png]
 == Issue #1: Performance
 Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
 
-== Issue #2: Race condition on multiple triggers
-If a Pod has two containers and both have new versions who triggers first?
-
-== Issue #3: No flow control
+== Issue #2: No flow control
 Updating the base image/builder will fire every single build at the same time
 
-== Issue #4: OpenShift
+== Issue #3: OpenShift
 Current solution ties us to OpenShift
 
 // 10 min
-
-== Agenda
-* Skatteetaten(NTA) and Kubernetes
-* Our old CD pipeline
-* *Needs for CD pipeline*
-* Introducing Sprocket
-* How to use Sprocket
-* Future plans
+// Headline
 
 // Bjarte
 == Needs
@@ -173,18 +161,7 @@ Current solution ties us to OpenShift
 
 == Build our own
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
- * Current solution ties us to OpenShift
 
-// 5 min
-
-// Kristoffer
-== Agenda
-* Skatteetaten(NTA) and Kubernetes
-* Our old CD pipeline
-* Needs for CD pipeline
-* *Introducing Sprocket*
-* How to use Sprocket
-* Future plans
 
 [state=left-box]
 == Sprocket
@@ -192,9 +169,46 @@ image::images/sprocket.jpg[canvas, size=cover]
 [.credit]
 credit:https://barkpost.com/cute/the-best-muppet-dogs/
 
+
+== Requirements
+* Only supports Nexus Container Registry
+* Only imageStreams supported in MVP
+* You need to build the Docker Image yourself
+* Sprocket needs to be able to communicate with all master-apis
+* It depends on how you build and version images
+
+== Version Strategy
+plantuml::versionStrategy.puml["versionStrategy", png]
+
+[.left-box]
+[.image-slide]
+== !
+//Semantic version
+image::images/postgres.png[postgres, size=cover]
+[.credit]
+credit:https://hub.docker.com/_/postgres (screenshost)
+
+== Installation steps
+* Build the sprocket docker image
+* configure global event hook in your Nexus Container Registry
+* set up and configure sprocket with shared secret from Nexus
+* configure clusters/resources and permissions in your clusters
+* Start sprocket
+
+== Label the resources
+* Update your kubernetes manifests to include skatteetate.no/sprocket labels
+* Or update some resources manually to test it out
+
 [state=red-font]
-== Sprocket
+== Design
 plantuml::sprocket.puml["sprocket", png]
+
+== Resources
+plantuml::sprocket-flow.puml["sprocket-flow", png]
+
+== One to many
+- Builds trigger both on base image and builder logic
+- Deployments can have multiple pods/init-containers
 
 == Sprocket
 * multiple instances
@@ -208,87 +222,35 @@ plantuml::sprocket-flowcontrol-node.puml["sprocket-flowcontrol-node", png]
 == Leader
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
-== Resources
-plantuml::sprocket-flow.puml["sprocket-flow", png]
-
-== One to many
- - Builds trigger both on base image and builder logic
- - Deployments can have multiple pods/init-containers
-
-
-// Kristoffer
-== Missing pieces
- * no resilience if event fails
- ** we get an alert from Nexus but nothing automatic
-
-// 10 min
-
-// Kan jeg bruke det nå?
-// Hva må jeg gjøre for å ta det i bruk?
-== Agenda
-* Skatteetaten(NTA) and Kubernetes
-* Our old CD pipeline
-* Needs for CD pipeline
-* Introducing Sprocket
-* *How to use Sprocket*
-* Future plans
-
-== Use cases
- * Can you just start to use it?
- * It depends on how you build and version images
- * MVP support Nexus Container Registry and ImageStreams
-
-== Version Strategy
-plantuml::versionStrategy.puml["versionStrategy", png]
-
-== Use Sprocket for rolling out "patches"
- * you rebuild an existing tag when there is a "bug"
- * usage pattern:
- ** install sprocket in your cluster
- ** configure Nexus Docker Registry global event hook
- ** label you resources
-
-// 5 min
-
-== Agenda
-* Skatteetaten(NTA) and Kubernetes
-* Our old CD pipeline
-* Needs for CD pipeline
-* Introducing Sprocket
-* How to use Sprocket
-* *Future plans*
-
-== Approval alerts to slack/mattermost
-- when a sprocket CRD fires that require approval
-
 == Management
-- api to view what is in the queue
-- ability to pause an runner
-- ability to change runner parameters
--- bulk size
--- delay
-- approvals? (before tagging a prod docker tag require approval)
+* approve/reject an AffectedImage
+* manage ResourceQueue and the related Runners
+* manage imageChangeEvent hook
+* manage fallback loop
+
+== ResourceFilterer
+* An AffectedResource is put into the ResourceQueue unless:
+** It is already in the queue waiting to be processed
+** It required approval from one or more roles
+
+== ResourceQueue
+ * Partitioned on Builds/Deploys for each cluster
+ * Will be rate limited according to configuration
+ * Each partition can be started/stopped in management api
+
+== Hooks
+ * On imageChangeEvent/onUpdate fire a webhook to an endpoint
+ * for invalidating manifest cache or tag list cache
+ ** nexus does not perform well for fetching tags/manifests
 
 == Fallback loop
 * Sometimes events will fail
-* Create a fallback loop that will periodically check if everything is up to date
+* Periodically check for outdated resource
 ** fire a ImageChangeEvent if not up to date
-
-== Cache Manifest
- * invalidate cache of tags if there is a new tag
- * invalidate manifest cache if tag changed
 
 == Support CloudEvents
 - for supporting different events then nexus
 - send event when your base distribution base image changes (ubi/alpine)
-
-== Tekton
- - Can tekton be used to enable complex workflows?
- - Make a ImageChangeEvent something that fires a tekton pipeline
-
-== Testing
- - When releasing a new base image you want to ensure that it does not impose any regressions.
- - When there is an ImageChangeEvent for a base image start a manual tekton pipeline to test it first before addings elements to the queue?
 
 // 10 min
 // Konklusjonslide
@@ -302,5 +264,6 @@ plantuml::versionStrategy.puml["versionStrategy", png]
  - https://github.com/skatteetaten/sprocket
  - https://skatteetaten.github.io/aurora/
  - Come to our stand to talk more!
+ - We hope to release Sprocket to a Docker Registry near you later this year.
 
 

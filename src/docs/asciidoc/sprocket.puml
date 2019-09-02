@@ -5,6 +5,8 @@ skinparam  BackgroundColor white
 
 
 
+
+
 database NexusDockerRegistry
 rectangle Sprocket
 
@@ -18,6 +20,8 @@ Sprocket --> test: 2. find resources   \n 4. update resources
 Sprocket --> utv: 2. find resources   \n 4. update resources
 Sprocket --> Sprocket: 3. flow control
 Sprocket -left-> SprocketDb: state
+
+
 
 
 @enduml
