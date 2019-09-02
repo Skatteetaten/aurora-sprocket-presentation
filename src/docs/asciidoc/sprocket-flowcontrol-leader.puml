@@ -25,19 +25,21 @@ rectangle DeployProdRunner<<leader>>
 rectangle DeployTestRunner<<leader>>
 rectangle DeployUtvRunner<<leader>>
 
- database ResourceQueue<<sprocket>>
+database ResourceQueue<<sprocket>>
 
-
+interface ExternalService
 
 BuildRunner --> ResourceQueue : 1.fetch affected builds
 BuildRunner --> KubernetesU : 2. start builds
 
 DeployProdRunner --> ResourceQueue : 1. fetch deploys for prod
-DeployProdRunner --> KubernetesP : 2. deploy
+DeployProdRunner -right-> ExternalService: 2. onUpdateHook
+DeployProdRunner -down-> KubernetesP : 3. deploy
 
 DeployTestRunner -up-> ResourceQueue : 1. fetch deploys for test
 DeployTestRunner --> KubernetesT : 2. deploy
 
 DeployUtvRunner -up-> ResourceQueue : 1. fetch deploys for utv
 DeployUtvRunner --> KubernetesU : 2. deploy
+
 @enduml
