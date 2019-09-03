@@ -79,13 +79,8 @@ credit:foobar
 
 //Kristoffer
 
-[.left-box]
-[.image-slide]
 == !
-//Semantic version
 image::images/postgres.png[postgres, size=cover]
-[.credit]
-credit:https://hub.docker.com/_/postgres (screenshost)
 
 == Postgres strategy
 [#strategies]
@@ -97,10 +92,15 @@ credit:https://hub.docker.com/_/postgres (screenshost)
 |9.6.14 | New when base image changes/builder
 |===
 
-== What is missing?
- * what is the base image when no classifier
- * what version of the base image is used
- * what if the build logic changes
+== !
+image::images/postgres_baseimage.png[postgres_baseimage, size=cover]
+
+== !
+image::images/postgres_baseimage_version.png[postgres_baseversion, size=cover]
+
+== !
+image::images/postgres_builder_logic.png[postgres_builder, size=cover]
+
 
 // Bjarte
 == Aurora Version
@@ -180,13 +180,8 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 == Version Strategy
 plantuml::versionStrategy.puml["versionStrategy", png]
 
-[.left-box]
-[.image-slide]
 == !
-//Semantic version
 image::images/postgres.png[postgres, size=cover]
-[.credit]
-credit:https://hub.docker.com/_/postgres (screenshost)
 
 == Installation steps
 * Build the sprocket docker image
