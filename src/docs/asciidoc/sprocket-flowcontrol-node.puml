@@ -21,8 +21,7 @@ database KubernetesT<<kubernetes>> [
 test
 ]
 
-interface ExternalService1
-
+interface ExternalService
 
 rectangle ImageChangeEventParser<<node>>
 rectangle ResourceFetcher<<node>>
@@ -42,7 +41,7 @@ ResourceFetcher --> KubernetesT : 4. fetch test resources
 ResourceFetcher --> KubernetesP : 4. fetch prod resources
 ResourceFetcher -left-> AffectedResources : 5. store
 ResourceFetcher -right-> ResourceFilterer : 6. filter resources
-ImageChangeEventParser -right-> ExternalService1 : 3. onImageChangeEvent webhook
+ImageChangeEventParser -right-> ExternalService : 3. onImageChangeEvent webhook
 
 ResourceFilterer --> ResourceQueue : 7. store
 
