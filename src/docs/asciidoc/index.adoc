@@ -15,6 +15,9 @@ credit:foobar
 
 [.notes]
 --
+* Critical vulnerability out
+* Affects all images
+* React now
 * Stay in this talk to learn how we are building a tool to help us tackle this scenario
 * After you leave you will be equiped with more knowledge and maybe a tool that can help you?
 --
@@ -62,7 +65,7 @@ Sprocket MVP demo
 
 [.notes]
 --
-* to Kristoffer: We have a specific way of versioning docker images
+* transition to Kristoffer: We have a specific way of versioning docker images
 --
 
 == !
@@ -97,7 +100,7 @@ image::images/postgres_baseimage.png[postgres_baseimage, size=cover]
 [.notes]
 --
 * what base image is the standard one?
-* it might be in metadta, but why not as tag?
+* it might be in metadata, but why not as tag?
 --
 
 == !
@@ -106,7 +109,7 @@ image::images/postgres_baseimage_version.png[postgres_baseversion, size=cover]
 
 [.notes]
 --
-* alpine classifier singla the base image name, but what about version?
+* alpine classifier shows the base image name, but what about version?
 --
 
 == !
@@ -126,7 +129,7 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 
 [.notes]
 --
-* Extra tag that clearly show alle the parts of a version
+* Extra tag that clearly show all the parts of a version
 * central component of our own CD pipeline
 --
 
@@ -150,14 +153,38 @@ plantuml::imageStream.puml["imageStream", png]
 == New base image
 plantuml::imageStream1.puml["imageStream1", png]
 
+[.notes]
+--
+    * Transition to issues: There are some issues with Openshift and ImageStreams
+--
+
 == Issue #1: Performance
 Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
+
+[.notes]
+--
+    * Our installation has few and large clusters and does not scale
+    * Polling is not optimal
+--
 
 == Issue #2: No flow control
 Updating the base image/builder will fire every single build at the same time
 
+[.notes]
+--
+    * The builtin flow control in Kubernetes and Openshift does not meet our needs
+    * We want to have more control of how images are built and deployed
+    * Currently rebuilding a base image will fire every single build until kubernetes cluster reaches its resource limits
+--
+
+
 == Issue #3: OpenShift
 Current solution ties us to OpenShift
+
+[.notes]
+--
+    *
+--
 
 // 10 min
 // Headline
