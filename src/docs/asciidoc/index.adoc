@@ -13,51 +13,34 @@ image::images/security-bug.jpg[canvas, size=cover]
 [.credit]
 credit:foobar
 
-// Gjør denne dramatisk
-
-// 1:     a1b
-// 1.2:   a1b
-// 1.2.3: a1b*
-// test:  a1b
-// prod:  c5k
-
-//tagge test -> prod
-// <siste patch>> --> test
-
-//Tag: foo/bar:1@a1b -> foo/bar: prod
-//Nytt base image foo/bar:1@c2k : prod@a1b
-
-// Hard kobling mellom CI (jenkins?) og hvilke miljøer som skal ha ny versjon?
-
-//== We can help
-// * Install Sprocket and configure it for listening to Deployments in your cluster
-// * Set up Nexus global event hook to send events to Sprocket
-// * label your Deployment with the sprocket label
-// * build new image
-// * new ReplicaSet will be rolled out
+[.notes]
+--
+* Stay in this talk to learn how we are building a tool to help us tackle this scenario
+* After you leave you will be equiped with more knowledge and maybe a tool that can help you?
+--
 
 [state=red-font]
 == Intro
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 * Bjarte Stien Karlsen, Architect & Developer in NTA
 
-// Bjarte
-== Sprocket MVP demo
-* Show simple asciicinema demo
-// run build, nothing happens?
+== !
+[.single-headline2]
+Sprocket MVP demo
 
-//Sprocket is running
-//Show configuration
-//label resource
-
-// run build, it works
-
+[.notes]
+--
+* Start build to simulate that CVE is fixed
+* Nothing happends
+* Ensure sprocket is running
+* Label imageStream
+* Start deploy, it is rolled out
+--
 
 == Questions?
 * Time at the end for questions
 * Or come to our stand, we will both be there after the talk
 
-// Agenda
 == Agenda
 * *Skatteetaten(NTA) and Kubernetes*
 * Status quo and problems?
@@ -77,10 +60,20 @@ credit:foobar
 * 5500 pods
 * on-prem OpenShift 3.11
 
-//Kristoffer
+[.notes]
+--
+* to Kristoffer: We have a specific way of versioning docker images
+--
 
 == !
 image::images/postgres.png[postgres, size=cover]
+
+[.notes]
+--
+* common pattern
+* one instance of a Docker Image has multiple tags
+* tags can be overwritten
+--
 
 == Postgres strategy
 [#strategies]
@@ -92,21 +85,54 @@ image::images/postgres.png[postgres, size=cover]
 |9.6.14 | New when base image changes/builder
 |===
 
+[.notes]
+--
+* briefly talk about the different strategies
+--
+
+
 == !
 image::images/postgres_baseimage.png[postgres_baseimage, size=cover]
+
+[.notes]
+--
+* what base image is the standard one?
+* it might be in metadta, but why not as tag?
+--
 
 == !
 image::images/postgres_baseimage_version.png[postgres_baseversion, size=cover]
 
+
+[.notes]
+--
+* alpine classifier singla the base image name, but what about version?
+--
+
 == !
 image::images/postgres_builder_logic.png[postgres_builder, size=cover]
 
+[.notes]
+--
+* Where does the builder logic change? Does it? Can i rebuild old image?
+* Most applicable if you have centralized builder logic like we do
+* transition to Bjarte: So how do we do it?
+--
 
 // Bjarte
 == Aurora Version
 plantuml::versionStrategy.puml["versionStrategy", png]
 
-== Current CD pipeline
+
+[.notes]
+--
+* Extra tag that clearly show alle the parts of a version
+* central component of our own CD pipeline
+--
+
+==!
+[.single-headline2]
+Current CD pipeline
 
 == Build
 plantuml::buildConfig.puml["buildConfig1", png]
@@ -161,7 +187,6 @@ Current solution ties us to OpenShift
 
 == Build our own
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
-
 
 [state=left-box]
 == Sprocket
@@ -248,9 +273,6 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
 == Support more inputs
  - support events from vanilla Docker Registry
  - support CloudEvents for arbitary input source
-
-// 10 min
-// Konklusjonslide
 
 == Conclusion
  - Create tools and processes to automate CD
