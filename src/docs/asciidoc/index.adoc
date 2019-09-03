@@ -298,7 +298,7 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
 
 == Support more inputs
  - support events from vanilla Docker Registry
- - support CloudEvents for arbitary input source
+ - support CloudEvents for generic input source
 
 == Conclusion
  - Create tools and processes to automate CD
@@ -309,6 +309,7 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
  - https://github.com/skatteetaten/sprocket
  - https://skatteetaten.github.io/aurora/
  - Come to our stand to talk more!
+ - Have alternate ways of doing this? Please reach out to us and we can talk!
  - We hope to release Sprocket to a Docker Registry near you later this year.
 
 
