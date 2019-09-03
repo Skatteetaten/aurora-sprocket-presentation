@@ -12,11 +12,9 @@ rectangle Sprocket
 
 database utv<<kubernetes>>
 
-database SprocketDb<<sprocket>>
 
 NexusDockerRegistry --> Sprocket : 1.Send audit events
-Sprocket --> utv: 2. find resources   \n 3. update resources
-Sprocket -left-> SprocketDb: state
+Sprocket --> utv: 2. find resources and update resources
 
 
 

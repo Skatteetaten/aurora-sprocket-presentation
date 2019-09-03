@@ -169,12 +169,13 @@ image::images/sprocket.jpg[canvas, size=cover]
 [.credit]
 credit:https://barkpost.com/cute/the-best-muppet-dogs/
 
+== Sprocket MVP
+plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
-== Requirements
+== Sprocket MVP
 * Only supports Nexus Container Registry
-* Only imageStreams supported in MVP
+* Only works in the cluster you deploy it in with ImageStreams
 * You need to build the Docker Image yourself
-* Sprocket needs to be able to communicate with all master-apis
 * It depends on how you build and version images
 
 == Version Strategy
@@ -187,17 +188,13 @@ image::images/postgres.png[postgres, size=cover]
 * Build the sprocket docker image
 * configure global event hook in your Nexus Container Registry
 * set up and configure sprocket with shared secret from Nexus
-* configure clusters/resources and permissions in your clusters
 * Start sprocket
 
 == Label the resources
-* Update your kubernetes manifests to include skatteetate.no/sprocket labels
+* Update your kubernetes manifests to include skatteetaten.no/sprocket labels
 * Or update some resources manually to test it out
 
-[state=red-font]
-== Design
-plantuml::sprocket.puml["sprocket", png]
-
+// Sprocket  1.0?
 == Resources
 plantuml::sprocket-flow.puml["sprocket-flow", png]
 

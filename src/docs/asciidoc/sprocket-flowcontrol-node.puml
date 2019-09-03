@@ -8,6 +8,7 @@ skinparam  BackgroundColor white
 
 database DockerRegistry
 
+interface ExternalProvider
 
 database KubernetesP<<kubernetes>> [
 prod
@@ -32,6 +33,7 @@ rectangle ResourceFilterer<<node>>
  database ResourceQueue<<sprocket>>
 
 
+ExternalProvider --> ImageChangeEventParser : 1. Send ImageChangeEvent
 DockerRegistry --> ImageChangeEventParser : 1.Send audit events
 ImageChangeEventParser -left-> ImageChangeEvents : 2. Store
 ImageChangeEventParser -down-> ResourceFetcher : 3. fetch resources
