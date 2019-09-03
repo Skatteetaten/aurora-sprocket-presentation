@@ -194,8 +194,14 @@ image::images/postgres.png[postgres, size=cover]
 * Update your kubernetes manifests to include skatteetaten.no/sprocket labels
 * Or update some resources manually to test it out
 
-// Sprocket  1.0?
-== Resources
+== !
+[.single-headline2]
+Sprocket 1.0
+
+==!
+plantuml::sprocket-puml["sprocket", png]
+
+==!
 plantuml::sprocket-flow.puml["sprocket-flow", png]
 
 == One to many
