@@ -126,7 +126,6 @@ image::images/postgres_builder_logic.png[postgres_builder, size=cover]
 == Aurora Version
 plantuml::versionStrategy.puml["versionStrategy", png]
 
-
 [.notes]
 --
 * Extra tag that clearly show all the parts of a version
@@ -183,7 +182,7 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
-    *
+    * transition to Bjarte: so what needs do we have for CD
 --
 
 // 10 min
