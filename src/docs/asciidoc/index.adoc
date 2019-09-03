@@ -198,27 +198,25 @@ image::images/postgres.png[postgres, size=cover]
 [.single-headline2]
 Sprocket 1.0
 
-==!
-plantuml::sprocket-puml["sprocket", png]
+== Features
+ * persistence of events
+ * leader-election for resiliency and scale
+ * support multiple clusters/resources
+ * flow-control
+ * management api
+ * optional approval of events
+ * support other input
+ * hooks (onUpdate, onImageChangeEvent)
+ * fallback loop for handling missing events
 
-==!
-plantuml::sprocket-flow.puml["sprocket-flow", png]
-
-== One to many
-- Builds trigger both on base image and builder logic
-- Deployments can have multiple pods/init-containers
-
-== Sprocket
-* multiple instances
-* leader election
-* all instance are nodes but only a single leader
-
-// Bjarte
 == Node
 plantuml::sprocket-flowcontrol-node.puml["sprocket-flowcontrol-node", png]
 
 == Leader
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
+
+== Resources
+plantuml::sprocket-flow.puml["sprocket-flow", png]
 
 == Management
 * approve/reject an AffectedImage
@@ -238,6 +236,7 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
 == Hooks
  * On imageChangeEvent/onUpdate fire a webhook to an endpoint
+ ** cloudevents
  * for invalidating manifest cache or tag list cache
  ** nexus does not perform well for fetching tags/manifests
 
@@ -246,9 +245,9 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * Periodically check for outdated resource
 ** fire a ImageChangeEvent if not up to date
 
-== Support CloudEvents
-- for supporting different events then nexus
-- send event when your base distribution base image changes (ubi/alpine)
+== Support more inputs
+ - support events from vanilla Docker Registry
+ - support CloudEvents for arbitary input source
 
 // 10 min
 // Konklusjonslide
