@@ -112,7 +112,7 @@ image::images/postgres.png[postgres, size=cover]
 [#strategies]
 |===
 |Name   | Description
-|latest | Any new build: Probably never use
+|latest | latest or newest stable?
 |9      | New features and patches
 |9.6    | New patches
 |9.6.14 | New when base image changes/builder
@@ -189,7 +189,7 @@ plantuml::imageStream1.puml["imageStream1", png]
 
 [.notes]
 --
- * Transition to issues: There are some issues with a CD pipeline based on ImageStreams
+ * Transition to issues: There are some issues with a CD pipeline
 --
 
 // TODO: Image
@@ -225,7 +225,7 @@ Current solution ties us to OpenShift
 --
 
 // TODO: Image
-== Issue #4: Caching Manifests/Tags from Docker
+== Issue #4: Performance query DockerRegistry
 
 [.notes]
 --
@@ -273,7 +273,7 @@ Current solution ties us to OpenShift
 
 == Build our own
  * No OpenSource solution so we decided to build our own
- * based on notifications from Nexus Container Registry notifications
+ * based on notifications from Nexus Container Registry
  * label queries
 
 [.notes]
@@ -399,15 +399,16 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
 == ResourceQueue
 * Partitioned on Builds/Deploys for each cluster
 * Will be rate limited according to configuration
-* Each partition/cog can be started/stopped in management api
+** size and delay
+* Each partition can be started/stopped in management api
 
-== Design: Cogs
+== Design: ResourceQueue
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
 [.notes]
 --
 * leader-election, only a single instance reads from queue
-* each partition of the ResourceQueue has it own applier job called a Cog
+* each partition of the ResourceQueue has it own applier job
 * onUpdate hook for audit trail
 * Will avoid DDoS of Docker Registry
 * transition Bjarte: But what about the AffectedImages that requires approvals?
@@ -418,8 +419,8 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 
 == Management
 * approve/reject an AffectedImage
-* manage ResourceQueue and the related Cogs
-* manage imageChangeEvent hook
+* manage ResourceQueue, partitions and related jobs
+* manage hooks
 * manage fallback loop
 
 == Fallback loop
@@ -430,7 +431,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 == Conclusion
  - Create tools and processes to automate CD
  - Prefer push based model
- - Crate fallback pull based loops for resiliency
+ - Create fallback pull based loops for resiliency
 
 == Fin
  - https://github.com/skatteetaten/sprocket

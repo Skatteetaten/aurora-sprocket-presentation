@@ -20,26 +20,26 @@ database KubernetesT<<kubernetes>> [
 test
 ]
 
-rectangle BuildCog<<leader>>
-rectangle DeployProdCog<<leader>>
-rectangle DeployTestCog<<leader>>
-rectangle DeployUtvCog<<leader>>
+rectangle BuildPartition<<leader>>
+rectangle DeployProdPartition<<leader>>
+rectangle DeployTestPartition<<leader>>
+rectangle DeployUtvPartition<<leader>>
 
 database ResourceQueue<<sprocket>>
 
 interface ExternalService
 
-BuildCog --> ResourceQueue : 1.fetch affected builds
-BuildCog --> KubernetesU : 2. start builds
+BuildPartition --> ResourceQueue : 1.fetch affected builds
+BuildPartition --> KubernetesU : 2. start builds
 
-DeployProdCog --> ResourceQueue : 1. fetch deploys for prod
-DeployProdCog -right-> ExternalService: 2. onUpdateHook
-DeployProdCog -down-> KubernetesP : 3. deploy
+DeployProdPartition --> ResourceQueue : 1. fetch deploys for prod
+DeployProdPartition -right-> ExternalService: 2. onUpdateHook
+DeployProdPartition -down-> KubernetesP : 3. deploy
 
-DeployTestCog -up-> ResourceQueue : 1. fetch deploys for test
-DeployTestCog --> KubernetesT : 2. deploy
+DeployTestPartition -up-> ResourceQueue : 1. fetch deploys for test
+DeployTestPartition --> KubernetesT : 2. deploy
 
-DeployUtvCog -up-> ResourceQueue : 1. fetch deploys for utv
-DeployUtvCog --> KubernetesU : 2. deploy
+DeployUtvPartition -up-> ResourceQueue : 1. fetch deploys for utv
+DeployUtvPartition --> KubernetesU : 2. deploy
 
 @enduml
