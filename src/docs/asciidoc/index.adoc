@@ -10,7 +10,6 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 [.image-slide]
 == [.underline]#*CRITICAL VULNERABILITY*# out that affects all your images.
 image::images/security-bug.jpg[canvas, size=cover]
-[.credit]
 credit:foobar
 
 [.notes]
@@ -56,6 +55,11 @@ Sprocket MVP demo
  * Semantic Version based version strategy
  * BuildConfig, CustomBuilder and triggers for building
  * Scheduled ImageStreams for Continuous Delivery (CD)
+
+[.notes]
+--
+
+--
 
 == Our clusters
 * 6 stable-clusters
@@ -120,6 +124,7 @@ image::images/postgres_builder_logic.png[postgres_builder, size=cover]
 * Where does the builder logic change? Does it? Can i rebuild old image?
 * Most applicable if you have centralized builder logic like we do
 * transition to Bjarte: So how do we do it?
+* maybe trainsition: So Bjarte. Enlighten us. Is there a better way?
 --
 
 // Bjarte
@@ -132,7 +137,7 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 * central component of our own CD pipeline
 --
 
-==!
+== !
 [.single-headline2]
 Current CD pipeline
 
@@ -182,7 +187,8 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
-    * transition to Bjarte: so what needs do we have for CD
+    * Want 
+    * transition to Bjarte:  So Bjarte, what did we do next? 
 --
 
 // 10 min
@@ -195,6 +201,11 @@ Current solution ties us to OpenShift
  * support OpenShift resources
  * enable flow control
  * rate limiting
+
+ [.notes]
+ --
+
+ --
 
 == Can OpenSource help?
  * looked at a lot of alternatives
@@ -211,8 +222,22 @@ Current solution ties us to OpenShift
  * label values have limitations, so sha1 the content.
  * CRD are possible to complex workflow/configuration
 
+[.notes]
+--
+    * (noe sånn)Transition to kristoffer: What did we make of this information? 
+--
+
+// Or kristoffer?
+
 == Build our own
  * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
+
+ [.notes]
+ --
+    Transition to Kristoffer: 
+ --
+
+// Kristoffer
 
 [state=left-box]
 == Sprocket
@@ -220,14 +245,25 @@ image::images/sprocket.jpg[canvas, size=cover]
 [.credit]
 credit:https://barkpost.com/cute/the-best-muppet-dogs/
 
+[.notes]
+--
+    * Fraggle rock inspiration
+    * 
+--
 == Sprocket MVP
 plantuml::sprocket-mvp.puml["sprocket-mvp", png]
+
 
 == Sprocket MVP
 * Only supports Nexus Container Registry
 * Only works in the cluster you deploy it in with ImageStreams
 * You need to build the Docker Image yourself
 * It depends on how you build and version images
+
+[.notes]
+--
+    Hva skal vi si her? Står det for mye på slidene? 
+--
 
 == Version Strategy
 plantuml::versionStrategy.puml["versionStrategy", png]
