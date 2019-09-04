@@ -261,24 +261,9 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
-* transition Kris: So no OpenSource solution can be used, what primitives do we have to work with?
+* transition Kris: So no OpenSource solution can be used, what did we do?
 --
 
-== What primitives can help us here?
- * notifications from DockerRegistries
- * labels on resources enable efficient queries
- * label values have limitations, so sha1 the content.
- * CRD are possible to complex workflow/configuration
-
-== Build our own
- * No OpenSource solution so we decided to build our own
- * based on notifications from Nexus Container Registry
- * label queries
-
-[.notes]
---
-  *  Transition: sprocket was born
---
 
 [state=left-box]
 == Sprocket
@@ -289,8 +274,12 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 [.notes]
 --
  * Fraggle rock inspiration
- * transition Bjarte: How does sprocket work?
 --
+
+== Sprocket MVP
+* react to notifications from Nexus notifications from DockerRegistries
+* user kubernetes labels and label queries for efficient fetching of AffectedResources
+* label values have limitations, so sha1 the docker pull url
 
 == Sprocket MVP
 plantuml::sprocket-mvp.puml["sprocket-mvp", png]
@@ -312,7 +301,7 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 [.notes]
 --
 * Started out with a very narrow scope
-* transition kris: What steps are needed to start using it?
+* transition Bjarte: What steps are needed to start using it?
 --
 
 == Installation steps
@@ -338,7 +327,7 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
 [.notes]
 --
-* transition Bjarte: This is as far as we are right now, but we have many plans for 1.0
+* transition Kris: This is as far as we are right now, but we have many plans for 1.0
 --
 
 == !
@@ -369,7 +358,7 @@ plantuml::sprocket-parsing.puml["sprocket-parsing", png]
 ** cloud events
 * hook to send events to other services
 ** invalidate manifest cache/tag cache
-* transition to Kris: After ImageChangeEvents are parsed and stored how do we find resources?
+* transition to Bjarte: After ImageChangeEvents are parsed and stored how do we find resources?
 --
 
 == Design: Fetching
@@ -410,7 +399,7 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * each partition of the ResourceQueue has it own applier job
 * onUpdate hook for audit trail
 * Will avoid DDoS of Docker Registry
-* transition Bjarte: But what about the AffectedImages that requires approvals?
+* transition Kris: But what about the AffectedImages that requires approvals?
 --
 
 == Design: Approval
