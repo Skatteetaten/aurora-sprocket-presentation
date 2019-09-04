@@ -188,7 +188,7 @@ plantuml::imageStream1.puml["imageStream1", png]
 
 [.notes]
 --
- * Transition to issues: There are some issues with a CD pipeline
+ * Transition to Bjarte There are some issues with a CD pipeline
 --
 
 // TODO: Image
@@ -197,6 +197,7 @@ Polling for new changes to lots of images all the time does not scale. Reported 
 
 [.notes]
 --
+    * Bjarte
     * Our installation has few and large clusters and does not scale
     * Polling is not optimal
 --
@@ -207,7 +208,9 @@ Updating the base image/builder will fire every single build at the same time
 
 [.notes]
 --
-    * The builtin flow control in Kubernetes and Openshift does not meet our needs
+
+* Kris
+* The builtin flow control in Kubernetes and Openshift does not meet our needs
     * We want to have more control of how images are built and deployed
     * Currently rebuilding a base image will fire every single build until kubernetes cluster reaches its resource limits
 --
@@ -218,6 +221,8 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
+* Bjarte
+* Want to use kubernetes resources
 * We want to be _able_ to use another distribution
 * Lots of other advantages of OpenShift
 * Easier to test AuroraPlattform on top of other distributions
@@ -228,6 +233,7 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
+* kris
 * docker api for fetching tags manifests is not fast
 * we cache part of manifest and tag list
 * need to invalidate
@@ -238,8 +244,9 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
+ * bjarte
  * culture demands it for certain projects/applications
- * transition Bjarte:  Based on our current CI/CD pipeline and the issues we have seen what is the needs for an improved solution
+ * transition Kris:  Based on our current CI/CD pipeline and the issues we have seen what is the needs for an improved solution
 --
 
 == Needs
@@ -261,7 +268,7 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
-* transition Kris: So no OpenSource solution can be used, what did we do?
+* transition Bjarte: So no OpenSource solution can be used, what did we do?
 --
 
 
@@ -277,7 +284,7 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 --
 
 == Sprocket MVP
-* react to notifications from Nexus notifications from DockerRegistries
+* react to notifications from Nexus Docker Registry
 * user kubernetes labels and label queries for efficient fetching of AffectedResources
 * label values have limitations, so sha1 the docker pull url
 
@@ -301,7 +308,7 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 [.notes]
 --
 * Started out with a very narrow scope
-* transition Bjarte: What steps are needed to start using it?
+* transition Kris: What steps are needed to start using it?
 --
 
 == Installation steps
@@ -327,7 +334,7 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
 [.notes]
 --
-* transition Kris: This is as far as we are right now, but we have many plans for 1.0
+* transition Bjarte: This is as far as we are right now, but we have many plans for 1.0
 --
 
 == !
@@ -348,7 +355,7 @@ Sprocket 1.0
 * transition: So how does the details looks like
 --
 
-== Design: Parsing
+== Parsing
 plantuml::sprocket-parsing.puml["sprocket-parsing", png]
 
 [.notes]
@@ -358,10 +365,10 @@ plantuml::sprocket-parsing.puml["sprocket-parsing", png]
 ** cloud events
 * hook to send events to other services
 ** invalidate manifest cache/tag cache
-* transition to Bjarte: After ImageChangeEvents are parsed and stored how do we find resources?
+* transition to Kris: After ImageChangeEvents are parsed and stored how do we find resources?
 --
 
-== Design: Fetching
+== Fetching
 plantuml::sprocket-fetching.puml["sprocket-fetching", png]
 
 [.notes]
@@ -374,7 +381,7 @@ plantuml::sprocket-fetching.puml["sprocket-fetching", png]
 * transition: What kind of resources do we plan to support
 --
 
-== Design: Resources
+== Resources
 plantuml::sprocket-flow.puml["sprocket-flow", png]
 
 [.notes]
@@ -390,7 +397,13 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
 ** size and delay
 * Each partition can be started/stopped in management api
 
-== Design: ResourceQueue
+[.notes]
+--
+* Transition Bjarte
+--
+
+
+== ResourceQueue
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
 [.notes]
@@ -399,7 +412,7 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * each partition of the ResourceQueue has it own applier job
 * onUpdate hook for audit trail
 * Will avoid DDoS of Docker Registry
-* transition Kris: But what about the AffectedImages that requires approvals?
+* But what about the AffectedImages that requires approvals?
 --
 
 == Design: Approval
