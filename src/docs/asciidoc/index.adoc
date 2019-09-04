@@ -45,7 +45,7 @@ Sprocket MVP demo
 * Ensure sprocket is running
 * Label imageStream
 * Start deploy, it is rolled out
-* Transision Kris: Before we talk more about our tool we need to talk about:
+* Transision Kris: Before we talk more about our tool we need to talk about why we made our own
 --
 
 == Agenda
@@ -57,7 +57,11 @@ Sprocket MVP demo
 
 [.notes]
 --
-* Talk briefly about each line
+* Us and Kubernetes in order to understand the scope
+* Summarize the findings and problems Bjarte reported last year
+* Discuss what needs and requirements we have for a new sollution
+* Present details about the MVP that we demoed earlier
+* Discuss planed features for Sprocket 1.0
 * Transision: If you have questions...
 --
 
@@ -152,7 +156,6 @@ image::images/postgres_builder_logic.png[postgres_builder, size=cover]
 * transition to Bjarte: So how do we create tags?
 --
 
-// Bjarte
 == Aurora Version
 plantuml::versionStrategy.puml["versionStrategy", png]
 
@@ -190,7 +193,7 @@ plantuml::imageStream1.puml["imageStream1", png]
 --
 
 // TODO: Image
-== Issue #1: Performance
+== Issue #1: Performance ImageStreams
 Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
 
 [.notes]
@@ -216,20 +219,37 @@ Current solution ties us to OpenShift
 
 [.notes]
 --
- * We want to be _able_ to use another distribution
- * Lots of other advantages of OpenShift
- * Easier to test AuroraPlattform on top of other distributions
+* We want to be _able_ to use another distribution
+* Lots of other advantages of OpenShift
+* Easier to test AuroraPlattform on top of other distributions
+--
+
+// TODO: Image
+== Issue #4: Caching Manifests/Tags from Docker
+
+[.notes]
+--
+* docker api for fetching tags manifests is not fast
+* we cache part of manifest and tag list
+* need to invalidate
+--
+
+// TODO: Image
+== Issue #5: Update rolled out in Prod without Approval?
+
+[.notes]
+--
+ * culture demands it for certain projects/applications
  * transition Bjarte:  Based on our current CI/CD pipeline and the issues we have seen what is the needs for an improved solution
 --
 
 == Needs
  * push based, reacting to events/webhooks
  * support Nexus Docker Registry(hosted/grouped repos)
- ** push to hosted repositories
- ** pull from groups
- ** one image that is pushed might be pulled from many groups
  * support OpenShift resources and vanilla kubernetes
  * enable flow control/rate limiting
+ * support optional approval from an user
+ * react to changed images to update caches
 
 == Can OpenSource help?
  * looked at a lot of alternatives
@@ -315,6 +335,7 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 * Nexus Container Registry
 ** HMAC security is not straight forward
 ** Filtering and washing events is complicated
+* Need fallback loop when events fails
 
 [.notes]
 --
