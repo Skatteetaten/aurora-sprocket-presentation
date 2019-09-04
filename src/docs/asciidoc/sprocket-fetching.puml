@@ -1,0 +1,37 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+database KubernetesP<<kubernetes>> [
+prod
+]
+database KubernetesU<<kubernetes>> [
+utv
+]
+
+database KubernetesT<<kubernetes>> [
+test
+]
+
+
+interface ChatUser
+rectangle ResourceFetcher<<node>>
+
+database AffectedResources<<sprocket>>
+database ResourceQueue<<sprocket>>
+
+rectangle ImageChangeEventParser<<node>>
+
+ImageChangeEventParser --> ResourceFetcher: 1. receive event
+ResourceFetcher --> KubernetesU : 2. fetch utv resources
+ResourceFetcher --> KubernetesT : 2. fetch test resources
+ResourceFetcher --> KubernetesP : 2. fetch prod resources
+ResourceFetcher -left-> AffectedResources : 3. store
+ResourceFetcher -right-> ResourceQueue : 4. add to queue if not present
+ResourceFetcher --> ChatUser: 4. ask for approval
+
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+
+interface ChatUser
+
+database AffectedResources<<sprocket>>
+database ResourceQueue<<sprocket>>
+
+rectangle Management<<node>>
+
+
+ChatUser --> Management: 1. approve/deny AffectedResource
+Management --> AffectedResources : 2. fetch resources
+Management --> ResourceQueue: 3. add to queue
+Management --> AffectedResources: 3. mark as rejected
+@enduml

@@ -20,26 +20,26 @@ database KubernetesT<<kubernetes>> [
 test
 ]
 
-rectangle BuildRunner<<leader>>
-rectangle DeployProdRunner<<leader>>
-rectangle DeployTestRunner<<leader>>
-rectangle DeployUtvRunner<<leader>>
+rectangle BuildCog<<leader>>
+rectangle DeployProdCog<<leader>>
+rectangle DeployTestCog<<leader>>
+rectangle DeployUtvCog<<leader>>
 
 database ResourceQueue<<sprocket>>
 
 interface ExternalService
 
-BuildRunner --> ResourceQueue : 1.fetch affected builds
-BuildRunner --> KubernetesU : 2. start builds
+BuildCog --> ResourceQueue : 1.fetch affected builds
+BuildCog --> KubernetesU : 2. start builds
 
-DeployProdRunner --> ResourceQueue : 1. fetch deploys for prod
-DeployProdRunner -right-> ExternalService: 2. onUpdateHook
-DeployProdRunner -down-> KubernetesP : 3. deploy
+DeployProdCog --> ResourceQueue : 1. fetch deploys for prod
+DeployProdCog -right-> ExternalService: 2. onUpdateHook
+DeployProdCog -down-> KubernetesP : 3. deploy
 
-DeployTestRunner -up-> ResourceQueue : 1. fetch deploys for test
-DeployTestRunner --> KubernetesT : 2. deploy
+DeployTestCog -up-> ResourceQueue : 1. fetch deploys for test
+DeployTestCog --> KubernetesT : 2. deploy
 
-DeployUtvRunner -up-> ResourceQueue : 1. fetch deploys for utv
-DeployUtvRunner --> KubernetesU : 2. deploy
+DeployUtvCog -up-> ResourceQueue : 1. fetch deploys for utv
+DeployUtvCog --> KubernetesU : 2. deploy
 
 @enduml

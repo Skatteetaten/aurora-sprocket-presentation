@@ -1,0 +1,35 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+database vanilla [
+DockerRegistry
+]
+
+database DockerRegistry [
+Nexus
+]
+
+interface ExternalProvider
+
+
+interface ExternalService
+
+rectangle ImageChangeEventParser<<node>>
+database ImageChangeEvents<<sprocket>>
+
+rectangle ResourceFetcher<<node>>
+
+ExternalProvider --> ImageChangeEventParser : 1. Send ImageChangeEvent/CloudEvent
+DockerRegistry --> ImageChangeEventParser : 1.Send audit events
+vanilla --> ImageChangeEventParser : 1.Send audit events
+ImageChangeEventParser -left-> ImageChangeEvents : 2. Store
+ImageChangeEventParser -down-> ResourceFetcher : 3. fetch resources
+ImageChangeEventParser -right-> ExternalService : 4. onImageChangeEvent webhook
+
+
+@enduml

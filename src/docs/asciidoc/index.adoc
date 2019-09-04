@@ -6,7 +6,6 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
 :revnumber: {project-version}
 
-//Kristoffer
 [.image-slide]
 == [.underline]#*CRITICAL VULNERABILITY*# out that affects all your images.
 image::images/security-bug.jpg[canvas, size=cover]
@@ -14,9 +13,10 @@ credit:foobar
 
 [.notes]
 --
-* Critical vulnerability out
+* Kris comes on stages and says: Critical vulnerability out
 * Affects all images
 * React now
+* Bjarte: Do you have the processes and tools in place to handle this scenario?
 * Stay in this talk to learn how we are building a tool to help us tackle this scenario
 * After you leave you will be equiped with more knowledge and maybe a tool that can help you?
 --
@@ -25,6 +25,14 @@ credit:foobar
 == Intro
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 * Bjarte Stien Karlsen, Architect & Developer in NTA
+
+[.notes]
+--
+* Kris: Eariler this year I interned at Bjartes team where I worked on this problem
+* If you want to know more about Trainee/Tech Graduate program, come to stand after
+* Bjarte: Developer and Architect working mainly on PaaS.
+* Last year at JavaZone presented about our experience, we have a problem and hence we are here
+--
 
 == !
 [.single-headline2]
@@ -37,11 +45,8 @@ Sprocket MVP demo
 * Ensure sprocket is running
 * Label imageStream
 * Start deploy, it is rolled out
+* Transision Kris: Before we talk more about our tool we need to talk about:
 --
-
-== Questions?
-* Time at the end for questions
-* Or come to our stand, we will both be there after the talk
 
 == Agenda
 * *Skatteetaten(NTA) and Kubernetes*
@@ -50,18 +55,34 @@ Sprocket MVP demo
 * Sprocket MVP
 * Sprocket 1.0
 
+[.notes]
+--
+* Talk briefly about each line
+* Transision: If you have questions...
+--
+
+== Questions?
+* Time at the end for questions
+* Or come to our stand, we will both be there after the talk
+
+
+[.notes]
+--
+* Transition Bjarte
+--
+
 == PaaS in NTA
- * Running OpenShift since 2015
+ * Running OpenShift distribution since 2015
  * Semantic Version based version strategy
  * BuildConfig, CustomBuilder and triggers for building
  * Scheduled ImageStreams for Continuous Delivery (CD)
 
 [.notes]
 --
-
+* brief
 --
 
-== Our clusters
+== Our kubernetes installation
 * 6 stable-clusters
 * 120 nodes
 * 5500 pods
@@ -69,7 +90,7 @@ Sprocket MVP demo
 
 [.notes]
 --
-* transition to Kristoffer: We have a specific way of versioning docker images
+* Transition Kristoffer: Before we talk about CI and CD we need to talk about versioning, plays important part
 --
 
 == !
@@ -78,15 +99,16 @@ image::images/postgres.png[postgres, size=cover]
 [.notes]
 --
 * common pattern
-* one instance of a Docker Image has multiple tags
+* one digest of an Docker Image has multiple tags
 * tags can be overwritten
+* Transision: This enables certain deployment strategies in your CD pipeline
 --
 
 == Postgres strategy
 [#strategies]
 |===
 |Name   | Description
-|latest | Any new build
+|latest | Any new build: Probably never use
 |9      | New features and patches
 |9.6    | New patches
 |9.6.14 | New when base image changes/builder
@@ -94,7 +116,11 @@ image::images/postgres.png[postgres, size=cover]
 
 [.notes]
 --
+* is latest newest build or newest stable build?
+* all these tags point to same digest
 * briefly talk about the different strategies
+* think about the contract for this application in this deployment
+* Transision: But there are some missing information here.
 --
 
 
@@ -123,8 +149,7 @@ image::images/postgres_builder_logic.png[postgres_builder, size=cover]
 --
 * Where does the builder logic change? Does it? Can i rebuild old image?
 * Most applicable if you have centralized builder logic like we do
-* transition to Bjarte: So how do we do it?
-* maybe trainsition: So Bjarte. Enlighten us. Is there a better way?
+* transition to Bjarte: So how do we create tags?
 --
 
 // Bjarte
@@ -133,13 +158,11 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 
 [.notes]
 --
+* latest is always newest semantic version
 * Extra tag that clearly show all the parts of a version
-* central component of our own CD pipeline
+* central component of our CI and CD pipelines
+* Transition: How does this affect building images
 --
-
-== !
-[.single-headline2]
-Current CD pipeline
 
 == Build
 plantuml::buildConfig.puml["buildConfig1", png]
@@ -150,7 +173,11 @@ plantuml::buildConfig2.puml["buildConfig2", png]
 == Code change
 plantuml::buildConfig3.puml["buildConfig3", png]
 
-// Kristoffer
+[.notes]
+--
+* Transition Kris: So when this is built how does applications get updated in our current CD pipeline
+--
+
 == Update
 plantuml::imageStream.puml["imageStream", png]
 
@@ -159,9 +186,10 @@ plantuml::imageStream1.puml["imageStream1", png]
 
 [.notes]
 --
-    * Transition to issues: There are some issues with Openshift and ImageStreams
+ * Transition to issues: There are some issues with a CD pipeline based on ImageStreams
 --
 
+// TODO: Image
 == Issue #1: Performance
 Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
 
@@ -171,6 +199,7 @@ Polling for new changes to lots of images all the time does not scale. Reported 
     * Polling is not optimal
 --
 
+// TODO: Image
 == Issue #2: No flow control
 Updating the base image/builder will fire every single build at the same time
 
@@ -181,31 +210,26 @@ Updating the base image/builder will fire every single build at the same time
     * Currently rebuilding a base image will fire every single build until kubernetes cluster reaches its resource limits
 --
 
-
-== Issue #3: OpenShift
+// TODO: Image
+== Issue #3: Want to able to run on bare Kubernetes
 Current solution ties us to OpenShift
 
 [.notes]
 --
-    * Want 
-    * transition to Bjarte:  So Bjarte, what did we do next? 
+ * We want to be _able_ to use another distribution
+ * Lots of other advantages of OpenShift
+ * Easier to test AuroraPlattform on top of other distributions
+ * transition Bjarte:  Based on our current CI/CD pipeline and the issues we have seen what is the needs for an improved solution
 --
 
-// 10 min
-// Headline
-
-// Bjarte
 == Needs
  * push based, reacting to events/webhooks
- * support Nexus (hosted/grouped repos)
- * support OpenShift resources
- * enable flow control
- * rate limiting
-
- [.notes]
- --
-
- --
+ * support Nexus Docker Registry(hosted/grouped repos)
+ ** push to hosted repositories
+ ** pull from groups
+ ** one image that is pushed might be pulled from many groups
+ * support OpenShift resources and vanilla kubernetes
+ * enable flow control/rate limiting
 
 == Can OpenSource help?
  * looked at a lot of alternatives
@@ -216,28 +240,26 @@ Current solution ties us to OpenShift
  ** does not support Nexus Container Registry
  ** no flow control
 
+[.notes]
+--
+* transition Kris: So no OpenSource solution can be used, what primitives do we have to work with?
+--
+
 == What primitives can help us here?
  * notifications from DockerRegistries
  * labels on resources enable efficient queries
  * label values have limitations, so sha1 the content.
  * CRD are possible to complex workflow/configuration
 
+== Build our own
+ * No OpenSource solution so we decided to build our own
+ * based on notifications from Nexus Container Registry notifications
+ * label queries
+
 [.notes]
 --
-    * (noe sånn)Transition to kristoffer: What did we make of this information? 
+  *  Transition: sprocket was born
 --
-
-// Or kristoffer?
-
-== Build our own
- * No OpenSource solution so we decided to build our own based on notifications from Nexus Container Registry notifications
-
- [.notes]
- --
-    Transition to Kristoffer: 
- --
-
-// Kristoffer
 
 [state=left-box]
 == Sprocket
@@ -247,94 +269,142 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 
 [.notes]
 --
-    * Fraggle rock inspiration
-    * 
+ * Fraggle rock inspiration
+ * transition Bjarte: How does sprocket work?
 --
+
 == Sprocket MVP
 plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
+[.notes]
+--
+* We started of building an MVP to test out the concept
+* We authenticate and parse events from Nexus into ImageChangeEvents
+* Fetch AffectedResources from the cluster
+* And update the running applications
+* Transistion: scope of MVP
+--
 
-== Sprocket MVP
+== MVP scope
 * Only supports Nexus Container Registry
 * Only works in the cluster you deploy it in with ImageStreams
 * You need to build the Docker Image yourself
-* It depends on how you build and version images
 
 [.notes]
 --
-    Hva skal vi si her? Står det for mye på slidene? 
+* Started out with a very narrow scope
+* transition kris: What steps are needed to start using it?
 --
-
-== Version Strategy
-plantuml::versionStrategy.puml["versionStrategy", png]
-
-== !
-image::images/postgres.png[postgres, size=cover]
 
 == Installation steps
 * Build the sprocket docker image
 * configure global event hook in your Nexus Container Registry
-* set up and configure sprocket with shared secret from Nexus
+* set up and configure sprocket
+** shared secret from Nexus
+** RBAC: list, update, create ImageStreams
 * Start sprocket
 
-== Label the resources
-* Update your kubernetes manifests to include skatteetaten.no/sprocket labels
-* Or update some resources manually to test it out
+== Usage
+* Update your ImageStream
+** remove scheduling
+** label with skatteetaten.no/sprocket=sha1-<sha1 digest of pull url>
+
+== Lessons
+* Push based model is very snappy compared to pulling
+** as seen in the demo
+* Nexus Container Registry
+** HMAC security is not straight forward
+** Filtering and washing events is complicated
+
+[.notes]
+--
+* transition Bjarte: This is as far as we are right now, but we have many plans for 1.0
+--
 
 == !
 [.single-headline2]
 Sprocket 1.0
 
 == Features
- * persistence of events
- * leader-election for resiliency and scale
  * support multiple clusters/resources
  * flow-control
  * management api
- * optional approval of events
- * support other input
+ * optional approval via ChatOps
+ * support other input sources then Nexus
  * hooks (onUpdate, onImageChangeEvent)
  * fallback loop for handling missing events
 
-== Node
-plantuml::sprocket-flowcontrol-node.puml["sprocket-flowcontrol-node", png]
+[.notes]
+--
+* transition: So how does the details looks like
+--
 
-== Leader
+== Design: Parsing
+plantuml::sprocket-parsing.puml["sprocket-parsing", png]
+
+[.notes]
+--
+* Support more input sources
+** Docker registry
+** cloud events
+* hook to send events to other services
+** invalidate manifest cache/tag cache
+* transition to Kris: After ImageChangeEvents are parsed and stored how do we find resources?
+--
+
+== Design: Fetching
+plantuml::sprocket-fetching.puml["sprocket-fetching", png]
+
+[.notes]
+--
+* An AffectedResource is put into the ResourceQueue unless:
+* It is already in the queue waiting to be processed
+* It required approval from one or more roles
+* Need approval since culture wants it for prod
+* Avoid duplicate rollouts shortly after each other
+* transition: What kind of resources do we plan to support
+--
+
+== Design: Resources
+plantuml::sprocket-flow.puml["sprocket-flow", png]
+
+[.notes]
+--
+* Sprocket CRD is used for 1-many
+* 1 BuildConfig needs to react to both changes in Builder logic and Base Image
+* transition: How is the ResourceQueue consumed
+--
+
+== ResourceQueue
+* Partitioned on Builds/Deploys for each cluster
+* Will be rate limited according to configuration
+* Each partition/cog can be started/stopped in management api
+
+== Design: Cogs
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
-== Resources
-plantuml::sprocket-flow.puml["sprocket-flow", png]
+[.notes]
+--
+* leader-election, only a single instance reads from queue
+* each partition of the ResourceQueue has it own applier job called a Cog
+* onUpdate hook for audit trail
+* Will avoid DDoS of Docker Registry
+* transition Bjarte: But what about the AffectedImages that requires approvals?
+--
+
+== Design: Approval
+plantuml::sprocket-management.puml["sprocket-management", png]
 
 == Management
 * approve/reject an AffectedImage
-* manage ResourceQueue and the related Runners
+* manage ResourceQueue and the related Cogs
 * manage imageChangeEvent hook
 * manage fallback loop
-
-== ResourceFilterer
-* An AffectedResource is put into the ResourceQueue unless:
-** It is already in the queue waiting to be processed
-** It required approval from one or more roles
-
-== ResourceQueue
- * Partitioned on Builds/Deploys for each cluster
- * Will be rate limited according to configuration
- * Each partition can be started/stopped in management api
-
-== Hooks
- * On imageChangeEvent/onUpdate fire a webhook to an endpoint
- ** cloudevents
- * for invalidating manifest cache or tag list cache
- ** nexus does not perform well for fetching tags/manifests
 
 == Fallback loop
 * Sometimes events will fail
 * Periodically check for outdated resource
 ** fire a ImageChangeEvent if not up to date
-
-== Support more inputs
- - support events from vanilla Docker Registry
- - support CloudEvents for generic input source
 
 == Conclusion
  - Create tools and processes to automate CD
