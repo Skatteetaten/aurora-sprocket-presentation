@@ -418,16 +418,16 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 == Design: Approval
 plantuml::sprocket-management.puml["sprocket-management", png]
 
+== Fallback loop
+* Sometimes events will fail
+* Periodically check for outdated resource
+** fire a ImageChangeEvent if not up to date
+
 == Management
 * approve/reject an AffectedImage
 * manage ResourceQueue, partitions and related jobs
 * manage hooks
 * manage fallback loop
-
-== Fallback loop
-* Sometimes events will fail
-* Periodically check for outdated resource
-** fire a ImageChangeEvent if not up to date
 
 == Conclusion
  - Create tools and processes to automate CD
