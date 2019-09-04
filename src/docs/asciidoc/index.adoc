@@ -34,9 +34,8 @@ credit:foobar
 * Last year at JavaZone presented about our experience, we have a problem and hence we are here
 --
 
-== !
-[.single-headline2]
-Sprocket MVP demo
+== MVP demo
+ * https://asciinema.org/a/265939
 
 [.notes]
 --
