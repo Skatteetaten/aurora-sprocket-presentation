@@ -397,12 +397,16 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * each partition of the ResourceQueue has it own applier job
 * onUpdate hook for audit trail
 * Will avoid DDoS of Docker Registry
-* transition to Kris: But what about the AffectedImages that requires approvals?
+* But what about the AffectedImages that requires approvals?
 --
 
 == Approval
 plantuml::sprocket-management.puml["sprocket-management", png]
 
+[.notes]
+--
+* transition to Kris: So what about the all important fallback loop
+--
 == Fallback loop
 * Sometimes events will fail
 * Periodically
@@ -411,16 +415,17 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 ** compare digest in ImageChangeEvent to digest in registry for the same tag
 ** if changed create a new ImageChangeEvent and send to Sprocket
 
-[.notes]
---
-* transition to Bjarte:
---
 
 == Management
 * approve/reject an AffectedImage
 * manage ResourceQueue, partitions and related jobs
 * manage hooks
 * manage fallback loop
+
+[.notes]
+--
+* transition to Bjarte:
+--
 
 == Conclusion
  - Create tools and processes to automate CD
