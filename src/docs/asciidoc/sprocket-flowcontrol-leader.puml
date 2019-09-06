@@ -29,17 +29,17 @@ database ResourceQueue<<sprocket>>
 
 interface ExternalService
 
-BuildPartition --> ResourceQueue : 1.fetch affected builds
+BuildPartition --> ResourceQueue : 1.fetch 10 affected builds; wait 30
 BuildPartition --> KubernetesU : 2. start builds
 
-DeployProdPartition --> ResourceQueue : 1. fetch deploys for prod
+DeployProdPartition --> ResourceQueue : 1. fetch 20 deploys for prod; wait 10
 DeployProdPartition -right-> ExternalService: 2. onUpdateHook
 DeployProdPartition -down-> KubernetesP : 3. deploy
 
-DeployTestPartition -up-> ResourceQueue : 1. fetch deploys for test
+DeployTestPartition -up-> ResourceQueue : 1. fetch 50 deploys for test; wait 20
 DeployTestPartition --> KubernetesT : 2. deploy
 
-DeployUtvPartition -up-> ResourceQueue : 1. fetch deploys for utv
+DeployUtvPartition -up-> ResourceQueue : 1. fetch 50 deploys for utv; wait 20
 DeployUtvPartition --> KubernetesU : 2. deploy
 
 @enduml

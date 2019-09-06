@@ -192,10 +192,8 @@ plantuml::imageStream1.puml["imageStream1", png]
  * Transition to Bjarte There are some issues with a CD pipeline
 --
 
-// TODO: Image
-//https://www.pexels.com/photo/close-up-of-snail-on-ground-320956/
 == Issue #1: Performance ImageStreams
-Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
+image::images/slow.jpg[canvas, size=cover]
 
 [.notes]
 --
@@ -204,10 +202,8 @@ Polling for new changes to lots of images all the time does not scale. Reported 
     * Polling is not optimal
 --
 
-// TODO: Image
-// vann glass som flyter over. evt ddos, water canal irrigation
 == Issue #2: No flow control
-Updating the base image/builder will fire every single build at the same time
+image::images/overflow.jpg[canvas, size=cover]
 
 [.notes]
 --
@@ -218,10 +214,8 @@ Updating the base image/builder will fire every single build at the same time
     * Currently rebuilding a base image will fire every single build until kubernetes cluster reaches its resource limits
 --
 
-// TODO: Image
-// Too rigid, not flexible enough, chain locked
-== Issue #3: Want to able to run on bare Kubernetes
-Current solution ties us to OpenShift
+== Issue #3: Cannot use Kubernetes resources
+image::images/locked.jpg[canvas, size=cover]
 
 [.notes]
 --
@@ -232,9 +226,8 @@ Current solution ties us to OpenShift
 * Easier to test AuroraPlattform on top of other distributions
 --
 
-// TODO: Image
-//Samme som sneilen over? Lime docker registry logo over
 == Issue #4: Performance query DockerRegistry
+image::images/slow.jpg[canvas, size=cover]
 
 [.notes]
 --
@@ -244,10 +237,8 @@ Current solution ties us to OpenShift
 * need to invalidate
 --
 
-// TODO: Image
-//https://www.freepik.com/free-vector/illustration-quality-control_2806721.htm
-// lime over logo til mattermost og notary
 == Issue #5: Quality Assurance
+image::images/qualitycontrol.jpg[canvas, size=cover]
 
 [.notes]
 --
@@ -294,11 +285,6 @@ credit:https://barkpost.com/cute/the-best-muppet-dogs/
 --
 
 == Sprocket MVP
-* react to notifications from Nexus Docker Registry
-* user kubernetes labels and label queries for efficient fetching of AffectedResources
-* label values have limitations, so sha1 the docker pull url
-
-== Sprocket MVP
 plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
 [.notes]
@@ -311,7 +297,7 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 --
 
 == MVP scope
-* Only supports Nexus Container Registry
+* Only supports Nexus Container Registry global event hook
 * Only works in the cluster you deploy it in with ImageStreams
 * You need to build the Docker Image yourself
 
@@ -355,6 +341,7 @@ Sprocket 1.0
  * support multiple clusters/resources
  * flow-control
  * management api
+ * quality assurance from notary
  * optional approval via ChatOps
  * support other input sources then Nexus
  * hooks (onUpdate, onImageChangeEvent)
@@ -398,20 +385,8 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
 --
 * Sprocket CRD is used for 1-many
 * 1 BuildConfig needs to react to both changes in Builder logic and Base Image
-* transition: How is the ResourceQueue consumed
+* transition to Bjarte: How is the ResourceQueue consumed
 --
-
-== ResourceQueue
-* Partitioned on Builds/Deploys for each cluster
-* Will be rate limited according to configuration
-** size and delay
-* Each partition can be started/stopped in management api
-
-[.notes]
---
-* Transition Bjarte
---
-
 
 == ResourceQueue
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
@@ -422,16 +397,24 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * each partition of the ResourceQueue has it own applier job
 * onUpdate hook for audit trail
 * Will avoid DDoS of Docker Registry
-* But what about the AffectedImages that requires approvals?
+* transition to Kris: But what about the AffectedImages that requires approvals?
 --
 
-== Design: Approval
+== Approval
 plantuml::sprocket-management.puml["sprocket-management", png]
 
 == Fallback loop
 * Sometimes events will fail
-* Periodically check for outdated resource
-** fire a ImageChangeEvent if not up to date
+* Periodically
+** fetch all unique sprockets
+** find latest ImageChangeEvent for sprocket
+** compare digest in ImageChangeEvent to digest in registry for the same tag
+** if changed create a new ImageChangeEvent and send to Sprocket
+
+[.notes]
+--
+* transition to Bjarte:
+--
 
 == Management
 * approve/reject an AffectedImage
@@ -444,11 +427,14 @@ plantuml::sprocket-management.puml["sprocket-management", png]
  - Prefer push based model
  - Create fallback pull based loops for resiliency
 
+== Question?!
+- Do you have any questions?
+- Have alternate ways of doing this? Please reach out to us and we can talk!
+
 == Fin
  - https://github.com/skatteetaten/sprocket
  - https://skatteetaten.github.io/aurora/
  - Come to our stand to talk more!
- - Have alternate ways of doing this? Please reach out to us and we can talk!
  - We hope to release Sprocket to a Docker Registry near you later this year.
 
 

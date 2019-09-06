@@ -13,7 +13,7 @@ ImageStream
 --
 name=app
 tags
- - from/name=docker.registry/app/1
+ - from/name=docker.registry/app:1
  - name=default
  - scheduled=true
 ]

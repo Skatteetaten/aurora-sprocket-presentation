@@ -48,6 +48,6 @@ architect -up-> Nexus : fetches zip
 architect --> wingnut11 : FROM
 BuildConfig -down-> architect: trigger on change
 BuildConfig --> wingnut11: trigger on change
-architect --> app : produce sha:a1b
+architect --> app : produce digest a1b
 
 @enduml

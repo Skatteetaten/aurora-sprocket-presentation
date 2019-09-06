@@ -1,0 +1,46 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+
+
+database KubernetesP<<kubernetes>> [
+prod
+]
+database KubernetesU<<kubernetes>> [
+utv
+]
+
+database KubernetesT<<kubernetes>> [
+test
+]
+
+database DockerRegistry [
+Nexus
+]
+
+database ImageChangeEvents<<sprocket>>
+
+
+rectangle FallbackFetcher<<leader>>
+
+rectangle FallbackLoop<<leader>>
+
+rectangle ImageChangeEventParser<<node>>
+
+interface scheduler
+scheduler --> FallbackLoop: run; wait 12h
+FallbackLoop --> FallbackFetcher : 1. fetch all unique sprockets
+FallbackFetcher --> KubernetesU : 1. fetch all sprocket label resources
+FallbackFetcher --> KubernetesT : 1. fetch all sprocket label resources
+FallbackFetcher --> KubernetesP : 1. fetch all sprocket label resources
+
+FallbackLoop -left-> DockerRegistry: 2. fetch latest digest for all tags
+FallbackLoop -right-> ImageChangeEvents : 3. compare latest event digest to actual latest digest
+
+
+FallbackLoop --> ImageChangeEventParser: 4. http cloudEvent ImageChanged
+
+@enduml
