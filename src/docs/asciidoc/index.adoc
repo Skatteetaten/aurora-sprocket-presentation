@@ -1,15 +1,13 @@
-:customcss: css/custom.css
 
-[state=title]
 = CD on Kubernetes that scale
 Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 2019-09-14
 :revnumber: {project-version}
 
-[.image-slide]
-//TODO: Fix text on top
-== [.underline]#*CRITICAL VULNERABILITY*# out that affects all your images.
+== !
 image::images/security-bug.jpg[canvas, size=cover]
+
+[.credit]
 credit:foobar
 
 [.notes]
@@ -22,7 +20,6 @@ credit:foobar
 * After you leave you will be equiped with more knowledge and maybe a tool that can help you?
 --
 
-[state=red-font]
 == Intro
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
 * Bjarte Stien Karlsen, Architect & Developer in NTA
@@ -192,7 +189,7 @@ plantuml::imageStream1.puml["imageStream1", png]
  * Transition to Bjarte There are some issues with a CD pipeline
 --
 
-== Issue #1: Performance ImageStreams
+== !
 image::images/slow.jpg[canvas, size=cover]
 
 [.notes]
@@ -202,7 +199,7 @@ image::images/slow.jpg[canvas, size=cover]
     * Polling is not optimal
 --
 
-== Issue #2: No flow control
+== !
 image::images/overflow.jpg[canvas, size=cover]
 
 [.notes]
@@ -214,7 +211,7 @@ image::images/overflow.jpg[canvas, size=cover]
     * Currently rebuilding a base image will fire every single build until kubernetes cluster reaches its resource limits
 --
 
-== Issue #3: Cannot use Kubernetes resources
+== !
 image::images/locked.jpg[canvas, size=cover]
 
 [.notes]
@@ -226,8 +223,8 @@ image::images/locked.jpg[canvas, size=cover]
 * Easier to test AuroraPlattform on top of other distributions
 --
 
-== Issue #4: Performance query DockerRegistry
-image::images/slow.jpg[canvas, size=cover]
+== !
+image::images/slow_docker.jpg[canvas, size=cover]
 
 [.notes]
 --
@@ -237,8 +234,9 @@ image::images/slow.jpg[canvas, size=cover]
 * need to invalidate
 --
 
-== Issue #5: Quality Assurance
+== !
 image::images/qualitycontrol.jpg[canvas, size=cover]
+
 
 [.notes]
 --
@@ -271,13 +269,8 @@ image::images/qualitycontrol.jpg[canvas, size=cover]
 * transition Bjarte: So no OpenSource solution can be used, what did we do?
 --
 
-
-[state=left-box]
-//TODO: fix text on top.
-== Sprocket
+== !
 image::images/sprocket.jpg[canvas, size=cover]
-[.credit]
-credit:https://barkpost.com/cute/the-best-muppet-dogs/
 
 [.notes]
 --
@@ -435,7 +428,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
  - Prefer push based model
  - Create fallback pull based loops for resiliency
 
-== Question?!
+== Question?
 - Do you have any questions?
 - Have alternate ways of doing this? Please reach out to us and we can talk!
 

@@ -489,3 +489,17 @@ body {
 .reveal table p {
   margin: 5px;
 }
+
+.left-box h2{
+    color: white;
+    background: rgba(25, 25, 25, .4);
+    border-radius: 20px;
+    margin-left: -1em;
+    margin-right: 7em;
+}
+
+
+.underline {
+    text-decoration: underline;
+    color: yellow;
+}
