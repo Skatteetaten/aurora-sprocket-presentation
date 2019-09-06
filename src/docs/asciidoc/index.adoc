@@ -7,6 +7,7 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 :revnumber: {project-version}
 
 [.image-slide]
+//TODO: Fix text on top
 == [.underline]#*CRITICAL VULNERABILITY*# out that affects all your images.
 image::images/security-bug.jpg[canvas, size=cover]
 credit:foobar
@@ -192,6 +193,7 @@ plantuml::imageStream1.puml["imageStream1", png]
 --
 
 // TODO: Image
+//https://www.pexels.com/photo/close-up-of-snail-on-ground-320956/
 == Issue #1: Performance ImageStreams
 Polling for new changes to lots of images all the time does not scale. Reported last javaZone.
 
@@ -203,6 +205,7 @@ Polling for new changes to lots of images all the time does not scale. Reported 
 --
 
 // TODO: Image
+// vann glass som flyter over. evt ddos, water canal irrigation
 == Issue #2: No flow control
 Updating the base image/builder will fire every single build at the same time
 
@@ -216,6 +219,7 @@ Updating the base image/builder will fire every single build at the same time
 --
 
 // TODO: Image
+// Too rigid, not flexible enough, chain locked
 == Issue #3: Want to able to run on bare Kubernetes
 Current solution ties us to OpenShift
 
@@ -229,6 +233,7 @@ Current solution ties us to OpenShift
 --
 
 // TODO: Image
+//Samme som sneilen over? Lime docker registry logo over
 == Issue #4: Performance query DockerRegistry
 
 [.notes]
@@ -240,11 +245,15 @@ Current solution ties us to OpenShift
 --
 
 // TODO: Image
-== Issue #5: Update rolled out in Prod without Approval?
+//https://www.freepik.com/free-vector/illustration-quality-control_2806721.htm
+// lime over logo til mattermost og notary
+== Issue #5: Quality Assurance
 
 [.notes]
 --
  * bjarte
+ * contact notary before rollout in some environments
+ * ask for approval from a chat user
  * culture demands it for certain projects/applications
  * transition Kris:  Based on our current CI/CD pipeline and the issues we have seen what is the needs for an improved solution
 --
@@ -273,6 +282,7 @@ Current solution ties us to OpenShift
 
 
 [state=left-box]
+//TODO: fix text on top.
 == Sprocket
 image::images/sprocket.jpg[canvas, size=cover]
 [.credit]
