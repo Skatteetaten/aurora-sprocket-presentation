@@ -375,7 +375,7 @@ plantuml::sprocket-fetching.puml["sprocket-fetching", png]
 * It required approval from one or more roles
 * Need approval since culture wants it for prod
 * Avoid duplicate rollouts shortly after each other
-* transition: What kind of resources do we plan to support
+* transition to Bjarte: What kind of resources do we plan to support
 --
 
 == Resources
@@ -385,7 +385,6 @@ plantuml::sprocket-flow.puml["sprocket-flow", png]
 --
 * Sprocket CRD is used for 1-many
 * 1 BuildConfig needs to react to both changes in Builder logic and Base Image
-* transition to Bjarte: How is the ResourceQueue consumed
 --
 
 == ResourceQueue
@@ -397,7 +396,7 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * each partition of the ResourceQueue has it own applier job
 * onUpdate hook for audit trail
 * Will avoid DDoS of Docker Registry
-* But what about the AffectedImages that requires approvals?
+* to Kris: But what about the AffectedImages that requires approvals?
 --
 
 == Approval
@@ -405,7 +404,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 
 [.notes]
 --
-* transition to Kris: So what about the all important fallback loop
+*  transition to Bjarte: So what about the all important fallback loop
 --
 == Fallback loop
 * Sometimes events will fail
@@ -415,6 +414,10 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 ** compare digest in ImageChangeEvent to digest in registry for the same tag
 ** if changed create a new ImageChangeEvent and send to Sprocket
 
+[.notes]
+--
+*  transition to Kris: So what about the all important fallback loop
+--
 
 == Management
 * approve/reject an AffectedImage

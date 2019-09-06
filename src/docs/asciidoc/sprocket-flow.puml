@@ -13,24 +13,6 @@ package ImageChangeEvent [
  sprocketLabel=sha1-a1b2adf
 ]
 
-package AffectedResource [
- kind=ImageStream
- namepace=foo
- name=bar
- approval=AdminUser
- approvalStatus=Pending
- notaryStatus=Ok
- putInResourceQueue= <timestamp>
- deployed= <timestamp>
- changeEventId
-]
-
-package ResourceQueue [
- partionName: deploy/utv
- affectedReourceId
- sprocketLabel: sha1-a1b2adf
-]
-
 
 component ImageStream [
  ImageStream
