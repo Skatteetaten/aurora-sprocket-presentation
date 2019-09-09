@@ -39,7 +39,7 @@ image::images/security-bug.jpg[canvas, size=cover]
 * Ensure sprocket is running
 * Label imageStream
 * Start deploy, it is rolled out
-* Transision Kris: Before we talk more about our tool we need to talk about why we made our own
+* Transision Kris: Before we talk more about us, why we created a tool and why not opensource
 --
 
 == Agenda
