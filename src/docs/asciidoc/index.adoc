@@ -428,6 +428,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 
 [.notes]
 --
+* Loose plans
 * transition to Bjarte: So what can we take from this.
 --
 
