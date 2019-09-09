@@ -421,10 +421,10 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 --
 
 == Management
-* approve/reject an AffectedImage
-* manage ResourceQueue, partitions and related jobs
-* manage hooks
-* manage fallback loop
+* approve/reject an AffectedResource
+* manage the ResourceQueue
+* reporting
+* runtime configuration
 
 [.notes]
 --
