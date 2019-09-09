@@ -407,6 +407,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 --
 *  transition to Bjarte: So what about the all important fallback loop
 --
+
 == Fallback loop
 * Sometimes events will fail
 * Periodically
