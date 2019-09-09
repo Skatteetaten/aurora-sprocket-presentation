@@ -7,9 +7,6 @@ Bjarte Stien Karlsen & Kristoffer Moberg Christensen
 == !
 image::images/security-bug.jpg[canvas, size=cover]
 
-[.credit]
-credit:foobar
-
 [.notes]
 --
 * Kris comes on stages and says: Critical vulnerability out
@@ -69,7 +66,7 @@ credit:foobar
 
 [.notes]
 --
-* Transition Bjarte
+* Transition Bjarte : how do NTA run kubernetes?
 --
 
 == PaaS in NTA
@@ -83,11 +80,12 @@ credit:foobar
 * brief
 --
 
-== Our kubernetes installation
+== Clusters
 * 6 stable-clusters
 * 120 nodes
 * 5500 pods
 * on-prem OpenShift 3.11
+* 50% annual growth
 
 [.notes]
 --
@@ -112,7 +110,7 @@ image::images/postgres.png[postgres, size=cover]
 |latest | latest or newest stable?
 |9      | New features and patches
 |9.6    | New patches
-|9.6.14 | New when base image changes/builder
+|9.6.14 | New when base image changes
 |===
 
 [.notes]
@@ -229,6 +227,7 @@ image::images/slow_docker.jpg[canvas, size=cover]
 [.notes]
 --
 * kris
+* we parse manifest and extract some information in our own Console
 * docker api for fetching tags manifests is not fast
 * we cache part of manifest and tag list
 * need to invalidate
@@ -244,6 +243,7 @@ image::images/qualitycontrol.jpg[canvas, size=cover]
  * contact notary before rollout in some environments
  * ask for approval from a chat user
  * culture demands it for certain projects/applications
+ * audit trail
  * transition Kris:  Based on our current CI/CD pipeline and the issues we have seen what is the needs for an improved solution
 --
 
@@ -252,7 +252,9 @@ image::images/qualitycontrol.jpg[canvas, size=cover]
  * support Nexus Docker Registry(hosted/grouped repos)
  * support OpenShift resources and vanilla kubernetes
  * enable flow control/rate limiting
- * support optional approval from an user
+ * support quality control
+ ** chatops
+ ** notary
  * react to changed images to update caches
 
 == Can OpenSource help?
@@ -331,14 +333,14 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 Sprocket 1.0
 
 == Features
- * support multiple clusters/resources
- * flow-control
- * management api
- * quality assurance from notary
- * optional approval via ChatOps
  * support other input sources then Nexus
  * hooks (onUpdate, onImageChangeEvent)
+ * support multiple clusters/resources
+ * optional approval via ChatOps
+ * flow-control
+ * quality assurance from notary
  * fallback loop for handling missing events
+ * management api
 
 [.notes]
 --
@@ -415,7 +417,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 
 [.notes]
 --
-*  transition to Kris: So what about the all important fallback loop
+*  transition to Kris: So what about the management interface
 --
 
 == Management
@@ -426,7 +428,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 
 [.notes]
 --
-* transition to Bjarte:
+* transition to Bjarte: So what can we take from this.
 --
 
 == Conclusion
