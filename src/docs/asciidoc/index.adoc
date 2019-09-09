@@ -372,14 +372,20 @@ plantuml::sprocket-fetching.puml["sprocket-fetching", png]
 --
 
 == Resources
-plantuml::sprocket-flow.puml["sprocket-flow", png]
+plantuml::sprocket-resources.puml["sprocket-resources", png]
+
+[.notes]
+--
+--
+
+== One to Many
+plantuml::sprocket-crd.puml["sprocket-crd", png]
 
 [.notes]
 --
 * Sprocket CRD is used for 1-many
 * 1 BuildConfig needs to react to both changes in Builder logic and Base Image
 --
-
 == ResourceQueue
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 

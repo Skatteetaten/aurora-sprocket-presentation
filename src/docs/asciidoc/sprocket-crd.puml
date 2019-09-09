@@ -1,0 +1,60 @@
+@startuml
+scale 600 height
+!include skatt.iuml
+skinparam  BackgroundColor white
+
+
+package ImageChangeEventBuilder [
+ registry=docker.skatteetaten.no
+ name=no.skatteetaten.aurora/architect
+ tag=1
+ digest=sha256:d9c
+ sprocketLabel=sha1-c123ad
+]
+
+package ImageChangeEventBase [
+ registry=docker.skatteetaten.no
+ name=no.skatteetaten.aurora/wingnut11
+ tag=1
+ digest=sha256:a1b
+ sprocketLabel=sha1-a1b2adf
+]
+
+component Sprocket1 [
+ Sprocket
+ ---
+  skatteetaten.no/sprocket=sha1-c123ad
+  name=whoami-build-architect
+ ---
+ spec:
+ | image=no.skatteetaten.aurora/architect:1
+ | resource
+ |   kind: BuildConfig
+ |   name: whoami
+ |   namespace: aurora-build
+]
+
+component BuildConfig [
+ BuildConfig
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefg
+ name=whoami
+ namespace=aurora-build
+]
+
+
+ImageChangeEventBase <-- BuildConfig: reacts to
+ImageChangeEventBuilder <-- Sprocket1: reacts to
+Sprocket1 -left-> BuildConfig : will start
+
+
+
+
+
+
+
+
+
+
+
+@enduml
