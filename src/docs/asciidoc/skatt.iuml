@@ -188,3 +188,6 @@ skinparam note {
     BackgroundColor #fdf6e3
     BorderColor gray
 }
+
+skinparam  BackgroundColor white
+skinparam defaultFontSize 24

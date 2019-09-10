@@ -1,5 +1,4 @@
 @startuml
-scale 600 height
 !include skatt.iuml
 skinparam  BackgroundColor white
 

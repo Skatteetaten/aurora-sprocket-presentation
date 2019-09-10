@@ -1,8 +1,6 @@
 @startuml
-scale 600 height
+scale 700 height
 !include skatt.iuml
-skinparam  BackgroundColor white
-
 
 
 
@@ -24,12 +22,12 @@ database ImageChangeEvents<<sprocket>>
 
 rectangle ResourceFetcher<<node>>
 
-ExternalProvider --> ImageChangeEventParser : 1. Send ImageChangeEvent/CloudEvent
+ExternalProvider --> ImageChangeEventParser : 1. Send CloudEvent
 DockerRegistry --> ImageChangeEventParser : 1.Send audit events
 vanilla --> ImageChangeEventParser : 1.Send audit events
 ImageChangeEventParser --> ImageChangeEvents : 3. Store
 ImageChangeEventParser -right-> ResourceFetcher : 4. fetch resources
-ImageChangeEventParser -left-> ExternalService : 2. onImageChangeEvent webhook
+ImageChangeEventParser -left-> ExternalService : 2.  webhook
 
 
 @enduml

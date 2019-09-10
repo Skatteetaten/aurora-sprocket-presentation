@@ -151,7 +151,7 @@ image::images/postgres_builder_logic.png[postgres_builder, size=cover]
 * transition to Bjarte: So how do we create tags?
 --
 
-== Aurora Version
+== !
 plantuml::versionStrategy.puml["versionStrategy", png]
 
 [.notes]
@@ -162,13 +162,13 @@ plantuml::versionStrategy.puml["versionStrategy", png]
 * Transition: How does this affect building images
 --
 
-== Build
+== !
 plantuml::buildConfig.puml["buildConfig1", png]
 
-== BaseImage Change
+== !
 plantuml::buildConfig2.puml["buildConfig2", png]
 
-== Code change
+== !
 plantuml::buildConfig3.puml["buildConfig3", png]
 
 [.notes]
@@ -176,10 +176,10 @@ plantuml::buildConfig3.puml["buildConfig3", png]
 * Transition Kris: So when this is built how does applications get updated in our current CD pipeline
 --
 
-== Update
+== !
 plantuml::imageStream.puml["imageStream", png]
 
-== New base image
+== !
 plantuml::imageStream1.puml["imageStream1", png]
 
 [.notes]
@@ -279,7 +279,7 @@ image::images/sprocket.jpg[canvas, size=cover]
  * Fraggle rock inspiration
 --
 
-== Sprocket MVP
+== !
 plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
 [.notes]
@@ -304,20 +304,20 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 
 == Installation steps
 * Build the sprocket docker image
-* configure global event hook in your Nexus Container Registry
-* set up and configure sprocket
-** shared secret from Nexus
+* Configure global event hook in your Nexus Container Registry
+* Set up and configure sprocket
+** Shared secret from Nexus
 ** RBAC: list, update, create ImageStreams
 * Start sprocket
 
 == Usage
 * Update your ImageStream
-** remove scheduling
-** label with skatteetaten.no/sprocket=sha1-<sha1 digest of pull url>
+** Remove scheduling
+** Label with skatteetaten.no/sprocket=sha1-<sha1 digest of pull url>
 
 == Lessons
 * Push based model is very snappy compared to pulling
-** as seen in the demo
+** As seen in the demo
 * Nexus Container Registry
 ** HMAC security is not straight forward
 ** Filtering and washing events is complicated
@@ -333,21 +333,21 @@ plantuml::sprocket-mvp.puml["sprocket-mvp", png]
 Sprocket 1.0
 
 == Features
- * support other input sources then Nexus
- * hooks (onUpdate, onImageChangeEvent)
- * support multiple clusters/resources
- * optional approval via ChatOps
- * flow-control
- * quality assurance from notary
- * fallback loop for handling missing events
- * management api
+ * Support other input sources then Nexus
+ * Hooks (onUpdate, onImageChangeEvent)
+ * Support multiple clusters/resources
+ * Optional approval via ChatOps
+ * Flow-control
+ * Quality assurance from notary
+ * Fallback loop for handling missing events
+ * Management api
 
 [.notes]
 --
 * transition: So how does the details looks like
 --
 
-== Parsing
+== !
 plantuml::sprocket-parsing.puml["sprocket-parsing", png]
 
 [.notes]
@@ -360,7 +360,7 @@ plantuml::sprocket-parsing.puml["sprocket-parsing", png]
 * transition to Kris: After ImageChangeEvents are parsed and stored how do we find resources?
 --
 
-== Fetching
+== !
 plantuml::sprocket-fetching.puml["sprocket-fetching", png]
 
 [.notes]
@@ -370,17 +370,17 @@ plantuml::sprocket-fetching.puml["sprocket-fetching", png]
 * It required approval from one or more roles
 * Need approval since culture wants it for prod
 * Avoid duplicate rollouts shortly after each other
-* transition to Bjarte: What kind of resources do we plan to support
+* Transition to Bjarte: What kind of resources do we plan to support
 --
 
-== Resources
+== !
 plantuml::sprocket-resources.puml["sprocket-resources", png]
 
 [.notes]
 --
 --
 
-== One to Many
+== !
 plantuml::sprocket-crd.puml["sprocket-crd", png]
 
 [.notes]
@@ -388,7 +388,8 @@ plantuml::sprocket-crd.puml["sprocket-crd", png]
 * Sprocket CRD is used for 1-many
 * 1 BuildConfig needs to react to both changes in Builder logic and Base Image
 --
-== ResourceQueue
+
+== !
 plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 
 [.notes]
@@ -400,7 +401,7 @@ plantuml::sprocket-flowcontrol-leader.puml["sprocket-flowcontrol-leader", png]
 * to Kris: But what about the AffectedImages that requires approvals?
 --
 
-== Approval
+== !
 plantuml::sprocket-management.puml["sprocket-management", png]
 
 [.notes]
@@ -411,10 +412,10 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 == Fallback loop
 * Sometimes events will fail
 * Periodically
-** fetch all unique sprockets
-** find latest ImageChangeEvent for sprocket
-** compare digest in ImageChangeEvent to digest in registry for the same tag
-** if changed create a new ImageChangeEvent and send to Sprocket
+** Fetch all unique sprockets
+** Find latest ImageChangeEvent for sprocket
+** Compare digest in ImageChangeEvent to digest in registry for the same tag
+** If changed create a new ImageChangeEvent and send to Sprocket
 
 [.notes]
 --
@@ -422,10 +423,10 @@ plantuml::sprocket-management.puml["sprocket-management", png]
 --
 
 == Management
-* approve/reject an AffectedResource
-* manage the ResourceQueue
-* reporting
-* runtime configuration
+* Approve/reject an AffectedResource
+* Manage the ResourceQueue
+* Reporting
+* Runtime configuration
 
 [.notes]
 --
