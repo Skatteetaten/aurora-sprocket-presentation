@@ -1,5 +1,6 @@
 @startuml
 !include skatt.iuml
+scale 1000 height
 
 () findEvents as " "
 
@@ -20,41 +21,25 @@ component ImageStream<<MVP>>[
 
 component BuildConfig [
  BuildConfig
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
-]
-
-
-component Job [
  Job
- --
- skatteetaten.no/sprocket=sha1-abcdefg
+ ---
+ skatteetaten.no/sprocket=sha1-abcdefgJob
 ]
+
+
 component Deployment [
  Deployment
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
-]
-
-component DemonSet [
  DemonSet
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
-]
-
-component StatefulSet [
  StatefulSet
  ---
- skatteetaten.no/sprocket=sha1-abcdefg
+  skatteetaten.no/sprocket=sha1-abcdefg
 ]
 
-ImageChangeEvent -right-> findEvents : sha1-abcdefg
-findEvents -up-> Deployment
-findEvents -up-> DemonSet
-findEvents -up-> StatefulSet
-findEvents -right-> ImageStream
-findEvents --> Job
-findEvents --> BuildConfig
+
+ImageChangeEvent -down-> findEvents : sha1-abcdefg
+findEvents --> Deployment
+findEvents -left-> ImageStream
+findEvents -right-> BuildConfig
 
 
 

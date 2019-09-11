@@ -1,7 +1,6 @@
 @startuml
 !include skatt.iuml
-skinparam  BackgroundColor white
-
+scale 700 height
 
 database Nexus [
 Nexus

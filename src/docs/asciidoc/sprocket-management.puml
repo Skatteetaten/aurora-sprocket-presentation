@@ -1,6 +1,6 @@
 @startuml
 !include skatt.iuml
-
+scale 700 height
 
 interface ChatUser
 

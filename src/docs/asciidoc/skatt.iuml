@@ -11,6 +11,7 @@ skinparam queue {
     BorderColor gray
     ArrowColor black
 
+    BackgroundColor<<sprocket>> #FFD086
     BackgroundColor<<OS1>> #FFD086
     BackgroundColor<<OS2>> #88D3E7
     BackgroundColor<<OS4>> #DF4661
@@ -190,4 +191,5 @@ skinparam note {
 }
 
 skinparam  BackgroundColor white
-skinparam defaultFontSize 24
+scale 1000 height
+

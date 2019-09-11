@@ -19,7 +19,7 @@ image::images/security-bug.jpg[canvas, size=cover]
 
 == Intro
 * Kristoffer Moberg Christensen, Trainee in the Norwegian Tax Administration(NTA)
-* Bjarte Stien Karlsen, Architect & Developer in NTA
+* Bjarte Stien Karlsen, Architect & Developer in NTA @bjartek
 
 [.notes]
 --
@@ -447,6 +447,7 @@ plantuml::sprocket-management.puml["sprocket-management", png]
  - https://github.com/skatteetaten/sprocket
  - https://skatteetaten.github.io/aurora/
  - Come to our stand to talk more!
+ - We are hiring!
  - We hope to release Sprocket to a Docker Registry near you later this year.
 
 

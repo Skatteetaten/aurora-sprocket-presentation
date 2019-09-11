@@ -1,7 +1,6 @@
 @startuml
-scale 900 height
 !include skatt.iuml
-
+scale 700 height
 
 
 
@@ -13,7 +12,7 @@ database utv<<kubernetes>>
 
 
 NexusDockerRegistry --> Sprocket : 1.Send audit events
-Sprocket --> utv: 2. find resources and update resources
+Sprocket --> utv: 2. find resources\n 3. update resrouces
 
 
 
