@@ -38,7 +38,7 @@ skinparam component {
 }
 
 skinparam artifact {
-    BackgroundColor #fdf6e3
+    BackgroundColor #E4E48E
     BorderColor gray
     ArrowColor black
 

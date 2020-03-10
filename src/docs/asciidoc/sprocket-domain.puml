@@ -1,61 +1,80 @@
 @startuml
 !include skatt.iuml
 
-() findEvents as " "
 
-package ImageChangeEvent [
- registry=docker.skatteetaten.no
+component ImageChangeEvent [
+ImageChangeEvent
+--
+ pullRegistry=internal-private-pull
  name=no.skatteetaten.demo/whoami
  tag=1
  digest=sha256:a1b
- sprocketLabel=sha1-abcdefg
+ sprocketLabel=sha1-a1b2adf
+ source= Nexus
 ]
 
-
-
-component ImageStream [
- ImageStream
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
-]
-component Sprocket [
- Sprocket CRD
- ---
-  skatteetaten.no/sprocket=sha1-abcdefg
- ---
- spec:
- - kind: BuildConfig
- - name: app
- - namespace: env
+folder Config {
+artifact registry [
+ImageChangeEventSource
+--
+type: Nexus|Docker|Generic
+authType: HMAC|Bearer
+url: http://push-url
+pullUrls: pull-url1, pull-url2
 ]
 
-component BuildConfig [
- BuildConfig
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
+artifact cluster [
+Cluster
+--
+name: utv
+url: http://
+token: aldkfja
 ]
 
-component Deployment [
- Deployment
- ---
- skatteetaten.no/sprocket=sha1-abcdefg
+artifact resource [
+Resource
+--
+kind: BuildConfig\n         Deployment\n         Job
 ]
 
+resource *-left-* cluster : ClusterResource
 
-ImageChangeEvent --> findEvents : sha1-abcdefg
-findEvents -right-> Deployment
-findEvents -left-> ImageStream
-findEvents --> Sprocket
-findEvents --> BuildConfig
-
-
-
-
-
-
-
-
+artifact hook [
+Hook
+--
+eventType: "onImageChangeEvent | onUpdate"
+url: http://foo.bar
+authType: Bearer
+token: aldfjaflkj
+type: notary
+]
+}
 
 
+component AffectedResource [
+AffectedResource
+--
+ requiresApprovalFrom: ROLE1, ROLE2
+ status: Registered|deployed|rejected
+ lastUpdated: <date>
+]
 
+rectangle hookResult [
+HookResult
+---
+status: Success
+message: Foo
+link: http://...
+]
+
+ImageChangeEvent --* hookResult : hooks
+
+AffectedResource --* hookResult :  hooks
+
+AffectedResource *-right-- ImageChangeEvent: is affected by
+AffectedResource *-up- resource : resource type
+AffectedResource *-up- cluster : is in cluster
+ImageChangeEvent *-- registry: source
+
+hook --* hookResult : type
 @enduml

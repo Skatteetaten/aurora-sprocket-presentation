@@ -24,9 +24,33 @@ rectangle ResourceFetcher<<node>>
 ExternalProvider --> ImageChangeEventParser : 1.  CloudEvent
 DockerRegistry --> ImageChangeEventParser : 1.audit events
 vanilla --> ImageChangeEventParser : 1.audit events
-ImageChangeEventParser --> ImageChangeEvents : 3. Store
+ImageChangeEventParser -right-> ImageChangeEvents : 3. Store
 ImageChangeEventParser -down-> ResourceFetcher : 4. fetch resources
 ImageChangeEventParser -left-> ExternalService : 2.  webhook
 
+
+
+
+database KubernetesU<<kubernetes>> [
+utv
+]
+
+database KubernetesT<<kubernetes>> [
+prod
+]
+
+
+interface ChatUser
+rectangle ResourceFetcher<<node>>
+
+database AffectedResources<<sprocket>>
+queue ResourceQueue<<sprocket>>
+
+
+ResourceFetcher --> KubernetesU : 5. fetch resources
+ResourceFetcher --> KubernetesT : 5. fetch resources
+ResourceFetcher -right-> AffectedResources : 6. store
+ResourceFetcher --> ChatUser: 7. ask for approval
+ResourceFetcher --> ResourceQueue : 7. or add to queue if not present
 
 @enduml
